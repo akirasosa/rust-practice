@@ -1,5 +1,6 @@
 use std::cmp;
-use std::collections::HashSet;
+use std::cmp::Ordering::{self, Greater, Less};
+use std::collections::{HashMap, HashSet};
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -50,6 +51,166 @@ macro_rules! read_value {
     };
 }
 
+pub trait Ext {
+    type Item;
+
+    fn lower_bound(&self, x: &Self::Item) -> usize
+        where
+            Self::Item: Ord;
+
+    fn lower_bound_by<'a, F>(&'a self, f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> Ordering;
+
+    fn lower_bound_by_key<'a, K, F>(&'a self, k: &K, f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord;
+
+    fn upper_bound(&self, x: &Self::Item) -> usize
+        where
+            Self::Item: Ord;
+
+    fn upper_bound_by<'a, F>(&'a self, f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> Ordering;
+
+    fn upper_bound_by_key<'a, K, F>(&'a self, k: &K, f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord;
+
+    fn equal_range(&self, x: &Self::Item) -> std::ops::Range<usize>
+        where
+            Self::Item: Ord;
+
+    fn equal_range_by<'a, F>(&'a self, f: F) -> std::ops::Range<usize>
+        where
+            F: FnMut(&'a Self::Item) -> Ordering;
+
+    fn equal_range_by_key<'a, K, F>(&'a self, k: &K, f: F) -> std::ops::Range<usize>
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord;
+}
+
+impl<T> Ext for [T] {
+    type Item = T;
+
+    fn lower_bound(&self, x: &Self::Item) -> usize
+        where
+            T: Ord,
+    {
+        self.lower_bound_by(|y| y.cmp(x))
+    }
+    fn lower_bound_by<'a, F>(&'a self, mut f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> Ordering,
+    {
+        let s = self;
+        let mut size = s.len();
+        if size == 0 {
+            return 0;
+        }
+        let mut base = 0usize;
+        while size > 1 {
+            let half = size / 2;
+            let mid = base + half;
+            let cmp = f(unsafe { s.get_unchecked(mid) });
+            base = if cmp == Less { mid } else { base };
+            size -= half;
+        }
+        let cmp = f(unsafe { s.get_unchecked(base) });
+        base + (cmp == Less) as usize
+    }
+    fn lower_bound_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord,
+    {
+        self.lower_bound_by(|e| f(e).cmp(k))
+    }
+
+    fn upper_bound(&self, x: &Self::Item) -> usize
+        where
+            T: Ord,
+    {
+        self.upper_bound_by(|y| y.cmp(x))
+    }
+
+    fn upper_bound_by<'a, F>(&'a self, mut f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> Ordering,
+    {
+        let s = self;
+        let mut size = s.len();
+        if size == 0 {
+            return 0;
+        }
+        let mut base = 0usize;
+        while size > 1 {
+            let half = size / 2;
+            let mid = base + half;
+            let cmp = f(unsafe { s.get_unchecked(mid) });
+            base = if cmp == Greater { base } else { mid };
+            size -= half;
+        }
+        let cmp = f(unsafe { s.get_unchecked(base) });
+        base + (cmp != Greater) as usize
+    }
+    fn upper_bound_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> usize
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord,
+    {
+        self.upper_bound_by(|e| f(e).cmp(k))
+    }
+
+    fn equal_range(&self, x: &Self::Item) -> std::ops::Range<usize>
+        where
+            T: Ord,
+    {
+        self.equal_range_by(|y| y.cmp(x))
+    }
+    fn equal_range_by<'a, F>(&'a self, mut f: F) -> std::ops::Range<usize>
+        where
+            F: FnMut(&'a Self::Item) -> Ordering,
+    {
+        let s = self;
+        let mut size = s.len();
+        if size == 0 {
+            return 0..0;
+        }
+        let mut base = (0usize, 0usize);
+        while size > 1 {
+            let half = size / 2;
+            let mid = (base.0 + half, base.1 + half);
+            let cmp = (
+                f(unsafe { s.get_unchecked(mid.0) }),
+                f(unsafe { s.get_unchecked(mid.1) }),
+            );
+            base = (
+                if cmp.0 == Less { mid.0 } else { base.0 },
+                if cmp.1 == Greater { base.1 } else { mid.1 },
+            );
+            size -= half;
+        }
+        let cmp = (
+            f(unsafe { s.get_unchecked(base.0) }),
+            f(unsafe { s.get_unchecked(base.1) }),
+        );
+        (base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize)
+    }
+
+    fn equal_range_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> std::ops::Range<usize>
+        where
+            F: FnMut(&'a Self::Item) -> K,
+            K: Ord,
+    {
+        self.equal_range_by(|e| f(e).cmp(k))
+    }
+}
+
 #[inline]
 pub fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     debug_assert!(min <= max, "min must be less than or equal to max");
@@ -61,7 +222,6 @@ pub fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
         input
     }
 }
-
 
 #[allow(dead_code)]
 fn practice_1() {
@@ -651,8 +811,33 @@ fn abc079_c() {
     }
 }
 
+#[allow(dead_code)]
+fn arc084_a2() {
+    input! {
+        n: usize,
+        arr_a: [usize; n],
+        arr_b: [usize; n],
+        arr_c: [usize; n],
+    }
+    let n: usize = n;
+    let mut arr_a: Vec<usize> = arr_a;
+    let mut arr_b: Vec<usize> = arr_b;
+    let mut arr_c: Vec<usize> = arr_c;
+
+    arr_a.sort();
+    arr_b.sort();
+    arr_c.sort();
+
+    let res: usize = arr_b.iter()
+        .map(|b| {
+            arr_a.lower_bound(b) * (n - arr_c.upper_bound(b))
+        })
+        .sum();
+
+    println!("{:?}", res);
+}
 
 fn main() {
-    arc098_a2()
+    arc084_a2()
 }
 
