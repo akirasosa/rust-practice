@@ -212,7 +212,7 @@ impl<T> Ext for [T] {
 }
 
 #[inline]
-pub fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
+fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     debug_assert!(min <= max, "min must be less than or equal to max");
     if input < min {
         min
@@ -221,6 +221,21 @@ pub fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     } else {
         input
     }
+}
+
+#[inline]
+fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool {
+    let mut size = r - l;
+    let mut base = l;
+    while size > 1 {
+        let half = size / 2;
+        let mid = base + half;
+        if !query_fn(mid) {
+            base = mid;
+        }
+        size -= half;
+    }
+    base + !query_fn(base) as i64
 }
 
 #[allow(dead_code)]
@@ -853,7 +868,7 @@ fn arc037_c() {
     rows.sort();
     cols.sort();
 
-    let count = |n: usize| {
+    let cnt_lte = |n: usize| {
         rows.iter()
             .map(|&x| {
                 cols.upper_bound(&(n / x))
@@ -861,22 +876,12 @@ fn arc037_c() {
             .sum::<usize>()
     };
 
-    let x_min = rows[0] * cols[0];
-    let x_max = rows[n - 1] * cols[n - 1] + 1;
-    let mut size = x_max - x_min;
-    let mut base = x_min;
-    while size > 1 {
-        let half = size / 2;
-        let mid = base + half;
-        if count(mid) < k {
-            base = mid;
-        }
-        size -= half;
-    }
+    let l = rows[0] * cols[0];
+    let r = rows[n - 1] * cols[n - 1];
+    let res = binary_search(l as i64, r as i64, |x| cnt_lte(x as usize) >= k);
 
-    println!("{}", base + (count(base) < k) as usize);
+    println!("{}", res);
 }
-
 
 #[allow(dead_code)]
 fn abc023_d() {
@@ -887,60 +892,50 @@ fn abc023_d() {
     let n: usize = n;
     let arr: Vec<Vec<usize>> = arr;
 
-    let height_at = |n: usize| {
-        arr.iter()
-            .map(|a| {
-                a[0] + a[1] * n
-            })
-            .collect::<Vec<usize>>()
-    };
-    let last_heights = height_at(n - 1);
-    let max_height = *last_heights.iter().max().unwrap();
+    let max_height = arr.iter()
+        .map(|a| {
+            a[0] + a[1] * n - 1
+        })
+        .max()
+        .unwrap();
 
-    let remaining_times = |height: usize| {
+    let remaining_times_at = |height: i64| {
         arr.iter()
             .map(|a| {
-                (height as i64 - a[0] as i64) / a[1] as i64
+                (height - a[0] as i64) / a[1] as i64
             })
             .collect::<Vec<i64>>()
     };
 
-    let is_possible_with = |height: usize| {
-        let mut times = remaining_times(height);
+    let is_possible_with = |height: i64| {
+        let times = remaining_times_at(height);
         let mut times: Vec<(usize, i64)> = times.into_iter().enumerate().collect();
         times.sort_by(|&a, &b| { a.1.cmp(&b.1) });
 
         let is_possible = times.iter().enumerate()
-            .all(|(j, &t)| t.1 >= j as i64);
-        (is_possible, times)
+            .all(|(i, &t)| t.1 >= i as i64);
+        let order = times.iter()
+            .map(|&(i, _t)| i)
+            .collect::<Vec<usize>>();
+        (is_possible, order)
     };
 
-    let x_min = 0;
-    let x_max = max_height;
-    let mut size = x_max - x_min;
-    let mut base = x_min;
-    while size > 1 {
-        let half = size / 2;
-        let mid = base + half;
-        if !is_possible_with(mid).0 {
-            base = mid;
-        }
-        size -= half;
-    }
-    let found_height = base + !is_possible_with(base).0 as usize;
+    let found_height = binary_search(0, max_height as i64, |x| {
+        is_possible_with(x).0
+    });
 
-    let times = is_possible_with(found_height).1;
-    let res = times.iter().enumerate()
-        .map(|(i, &(j, _t))| {
+    let order = is_possible_with(found_height).1;
+    let res = order.iter().enumerate()
+        .map(|(i, &j)| {
             arr[j][0] + arr[j][1] * i
         })
         .max()
         .unwrap();
-//    println!("{} {} {}", res, found_height, base);
+
     println!("{}", res);
 }
 
 fn main() {
-    abc023_d()
+    arc037_c()
 }
 
