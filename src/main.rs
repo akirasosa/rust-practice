@@ -1,6 +1,6 @@
 use std::cmp;
 use std::cmp::Ordering::{self, Greater, Less};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -532,7 +532,7 @@ fn abc075_b() {
             }
             print!("{}", total);
         }
-        println!("");
+        println!();
     }
 }
 
@@ -812,7 +812,7 @@ fn abc079_c() {
 }
 
 #[allow(dead_code)]
-fn arc084_a2() {
+fn arc084_a() {
     input! {
         n: usize,
         arr_a: [usize; n],
@@ -837,7 +837,108 @@ fn arc084_a2() {
     println!("{:?}", res);
 }
 
+#[allow(dead_code)]
+fn arc037_c() {
+    input! {
+        n: usize,
+        k: usize,
+        rows: [usize; n],
+        cols: [usize; n],
+    }
+    let n: usize = n;
+    let k: usize = k;
+    let mut rows: Vec<usize> = rows;
+    let mut cols: Vec<usize> = cols;
+
+    rows.sort();
+    cols.sort();
+
+    let count = |n: usize| {
+        rows.iter()
+            .map(|&x| {
+                cols.upper_bound(&(n / x))
+            })
+            .sum::<usize>()
+    };
+
+    let x_min = rows[0] * cols[0];
+    let x_max = rows[n - 1] * cols[n - 1] + 1;
+    let mut size = x_max - x_min;
+    let mut base = x_min;
+    while size > 1 {
+        let half = size / 2;
+        let mid = base + half;
+        if count(mid) < k {
+            base = mid;
+        }
+        size -= half;
+    }
+
+    println!("{}", base + (count(base) < k) as usize);
+}
+
+#[allow(dead_code)]
+fn abc023_d() {
+    input! {
+        n: usize,
+        arr: [[usize; 2]; n],
+    }
+    let n: usize = n;
+    let arr: Vec<Vec<usize>> = arr;
+
+//    println!("{:?}", arr);
+    let height_at = |n: usize| {
+        arr.iter()
+            .map(|a| {
+                a[0] + a[1] * n
+            })
+            .collect::<Vec<usize>>()
+    };
+    let last_heights = height_at(n - 1);
+    let max_height = last_heights.iter().max().unwrap();
+
+    let remaining_times = |height: usize| {
+        arr.iter()
+            .map(|a| {
+                (height as i64 - a[0] as i64) / a[1] as i64
+            })
+            .collect::<Vec<i64>>()
+    };
+
+//    println!("{:?} {}", last_heights, max_height);
+//    println!("---");
+//    for i in 0..n {
+//        println!("{:?}", height_at(i));
+//    }
+
+//    println!("---");
+    for i in 0..*max_height {
+        let mut times = remaining_times(i);
+        let max_time = *times.iter().max().unwrap();
+        if max_time < (n - 1) as i64 {
+            continue;
+        }
+        let mut times: Vec<(usize, i64)> = times.into_iter().enumerate().collect();
+        times.sort_by(|&a, &b| { a.1.cmp(&b.1) });
+//        times.sort();
+        let is_possible = times.iter().enumerate()
+            .all(|(j, &t)| t.1 >= j as i64);
+        if is_possible {
+            let res = times.iter().enumerate()
+                .map(|(i, &(j, _t))| {
+                    arr[j][0] + arr[j][1] * i
+                })
+                .max()
+                .unwrap();
+            println!("{}", res);
+            return;
+        }
+//        println!("{} {:?} {}", i, times, max_time);
+//        println!("{} {:?} {} {}", i, times, max_time, is_possible);
+    }
+}
+
 fn main() {
-    arc084_a2()
+    abc023_d()
 }
 
