@@ -877,6 +877,7 @@ fn arc037_c() {
     println!("{}", base + (count(base) < k) as usize);
 }
 
+
 #[allow(dead_code)]
 fn abc023_d() {
     input! {
@@ -886,7 +887,6 @@ fn abc023_d() {
     let n: usize = n;
     let arr: Vec<Vec<usize>> = arr;
 
-//    println!("{:?}", arr);
     let height_at = |n: usize| {
         arr.iter()
             .map(|a| {
@@ -895,7 +895,7 @@ fn abc023_d() {
             .collect::<Vec<usize>>()
     };
     let last_heights = height_at(n - 1);
-    let max_height = last_heights.iter().max().unwrap();
+    let max_height = *last_heights.iter().max().unwrap();
 
     let remaining_times = |height: usize| {
         arr.iter()
@@ -905,37 +905,39 @@ fn abc023_d() {
             .collect::<Vec<i64>>()
     };
 
-//    println!("{:?} {}", last_heights, max_height);
-//    println!("---");
-//    for i in 0..n {
-//        println!("{:?}", height_at(i));
-//    }
-
-//    println!("---");
-    for i in 0..*max_height {
-        let mut times = remaining_times(i);
-        let max_time = *times.iter().max().unwrap();
-        if max_time < (n - 1) as i64 {
-            continue;
-        }
+    let is_possible_with = |height: usize| {
+        let mut times = remaining_times(height);
         let mut times: Vec<(usize, i64)> = times.into_iter().enumerate().collect();
         times.sort_by(|&a, &b| { a.1.cmp(&b.1) });
-//        times.sort();
+
         let is_possible = times.iter().enumerate()
             .all(|(j, &t)| t.1 >= j as i64);
-        if is_possible {
-            let res = times.iter().enumerate()
-                .map(|(i, &(j, _t))| {
-                    arr[j][0] + arr[j][1] * i
-                })
-                .max()
-                .unwrap();
-            println!("{}", res);
-            return;
+        (is_possible, times)
+    };
+
+    let x_min = 0;
+    let x_max = max_height;
+    let mut size = x_max - x_min;
+    let mut base = x_min;
+    while size > 1 {
+        let half = size / 2;
+        let mid = base + half;
+        if !is_possible_with(mid).0 {
+            base = mid;
         }
-//        println!("{} {:?} {}", i, times, max_time);
-//        println!("{} {:?} {} {}", i, times, max_time, is_possible);
+        size -= half;
     }
+    let found_height = base + !is_possible_with(base).0 as usize;
+
+    let times = is_possible_with(found_height).1;
+    let res = times.iter().enumerate()
+        .map(|(i, &(j, _t))| {
+            arr[j][0] + arr[j][1] * i
+        })
+        .max()
+        .unwrap();
+//    println!("{} {} {}", res, found_height, base);
+    println!("{}", res);
 }
 
 fn main() {
