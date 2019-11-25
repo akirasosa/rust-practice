@@ -213,6 +213,53 @@ impl<T> Ext for [T] {
     }
 }
 
+pub struct UnionFind {
+    parts: Vec<usize>
+}
+
+impl UnionFind {
+    pub fn new(n: usize) -> UnionFind {
+        let parts = (0..n).collect();
+        UnionFind { parts: parts }
+    }
+
+    pub fn union(&mut self, i: usize, j: usize) {
+        let i_leader = self.find(i);
+        let j_leader = self.find(j);
+        self.parts[j_leader] = self.parts[i_leader];
+    }
+
+    pub fn find(&mut self, i: usize) -> usize {
+        let mut p = i;
+        while self.parts[p] != p {
+            p = self.parts[p]
+        };
+        let mut s = i;
+        while s != p {
+            let t = self.parts[s];
+            self.parts[s] = p;
+            s = t
+        };
+        p
+    }
+
+    pub fn find_only(&self, i: usize) -> usize {
+        let mut p = i;
+        while self.parts[p] != p {
+            p = self.parts[p]
+        };
+        p
+    }
+
+    pub fn same(&mut self, i: usize, j: usize) -> bool {
+        self.find(i) == self.find(j)
+    }
+
+    pub fn same_only(&self, i: usize, j: usize) -> bool {
+        self.find_only(i) == self.find_only(j)
+    }
+}
+
 #[inline]
 fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     debug_assert!(min <= max, "min must be less than or equal to max");
@@ -1089,7 +1136,88 @@ fn abc034_d() {
     println!("{}", base);
 }
 
+#[allow(dead_code)]
+fn arc026_4() {
+    input! {
+        n: usize,
+        m: usize,
+        arr: [(usize, usize, f64, f64); m],
+    }
+    let n: usize = n;
+    let arr: Vec<(usize, usize, f64, f64)> = arr;
+
+    struct Edge {
+        from: usize,
+        to: usize,
+        cost: f64,
+        time: f64,
+    }
+    impl Edge {
+        fn cost_at(&self, x: f64) -> f64 {
+            self.cost - x * self.time
+        }
+    }
+
+    let mut edges: Vec<Edge> = arr.iter()
+        .map(|a| {
+            Edge {
+                from: a.0,
+                to: a.1,
+                cost: a.2,
+                time: a.3,
+            }
+        })
+        .collect();
+
+    let max_salary = edges.iter()
+        .map(|e| {
+            e.cost / e.time
+        })
+        .fold(0., |acc, a| {
+            if a > acc {
+                a
+            } else {
+                acc
+            }
+        });
+
+    let mut query = |x: f64| {
+        edges.sort_by(|a, b| {
+            let cost_a = a.cost_at(x);
+            let cost_b = b.cost_at(x);
+            cost_a.partial_cmp(&cost_b).unwrap()
+        });
+
+        let mut balance = 0.;
+        let mut parity = UnionFind::new(n);
+
+        for e in &edges {
+            let cost = e.cost_at(x);
+            if !parity.same(e.from, e.to) || cost < 0. {
+                parity.union(e.from, e.to);
+                balance += cost;
+            }
+        }
+
+        balance <= 0.
+    };
+
+    let l = 0.;
+    let r = max_salary;
+    let mut size = r - l;
+    let mut base = l;
+    while size > 1e-3 {
+        let half = size / 2.;
+        let mid = base + half;
+        if !query(mid) {
+            base = mid;
+        }
+        size -= half;
+    }
+    println!("{}", base);
+}
+
 fn main() {
-    abc034_d()
+    arc026_4()
 }
 
