@@ -1,5 +1,5 @@
 use std::cmp;
-use std::cmp::{min, max};
+use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Greater, Less};
 use std::collections::HashSet;
 use std::f64::consts::PI;
@@ -1053,7 +1053,43 @@ fn codefestival_2015_qual_a_d() {
     println!("{}", base + !query(base) as i64);
 }
 
+#[allow(dead_code)]
+fn abc034_d() {
+    input! {
+        n: usize,
+        k: usize,
+        arr: [[f64; 2]; n],
+    }
+    let k: usize = k;
+    let arr: Vec<Vec<f64>> = arr;
+
+    let query = |x: f64| {
+        let mut items: Vec<f64> = arr.iter()
+            .map(|a| {
+                a[0] * (a[1] - x)
+            })
+            .collect();
+        items.sort_by(|a, b| b.partial_cmp(a).unwrap());
+        items[..k].iter().sum::<f64>() >= 0.
+    };
+
+    let l = 0.;
+    let r = 100.;
+    let mut size = r - l;
+    let mut base = l;
+    while size > 1e-6 {
+        let half = size / 2.;
+        let mid = base + half;
+        if query(mid) {
+            base = mid;
+        }
+        size -= half;
+    }
+
+    println!("{}", base);
+}
+
 fn main() {
-    codefestival_2015_qual_a_d()
+    abc034_d()
 }
 
