@@ -1,7 +1,7 @@
 use std::cmp;
+use std::cmp::{min, max};
 use std::cmp::Ordering::{self, Greater, Less};
 use std::collections::HashSet;
-use std::cmp::min;
 use std::f64::consts::PI;
 
 macro_rules! input {
@@ -1008,7 +1008,52 @@ fn abc026_d() {
     println!("{}", base);
 }
 
+#[allow(dead_code)]
+fn codefestival_2015_qual_a_d() {
+    input! {
+        n: i64,
+        m: i64,
+        arr: [i64; m],
+    }
+    let n: i64 = n;
+    let arr: Vec<i64> = arr;
+
+    let query = |t: i64| {
+        let mut boundary = 0;
+
+        for &a in &arr {
+            let mut dist = a - boundary - 1;
+            if dist < 0 {
+                dist = 0;
+            }
+            if dist > t {
+                return false;
+            }
+            let b0 = max(boundary, a + t - dist * 2);
+            let b1 = a + (t - dist) / 2;
+            boundary = max(b0, b1);
+        }
+
+        return boundary >= n;
+    };
+
+    let l = 0;
+    let r = n * 2;
+    let mut size = r - l + 1;
+    let mut base = l;
+    while size > 1 {
+        let half = size / 2;
+        let mid = base + half;
+        if !query(mid) {
+            base = mid;
+        }
+        size -= half;
+    }
+
+    println!("{}", base + !query(base) as i64);
+}
+
 fn main() {
-    abc026_d()
+    codefestival_2015_qual_a_d()
 }
 
