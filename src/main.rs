@@ -1219,137 +1219,181 @@ fn arc026_4() {
 
 #[allow(dead_code)]
 fn arc060_a() {
-//    input! {
-//        n: usize,
-//        a: usize,
-//        arr: [usize; n],
-//    }
-//    let n: usize = n;
-//    let a: usize = a;
-//    let arr: Vec<usize> = arr;
-//    println!("{} {} {:?}", n, a, arr);
-}
+    input! {
+        n: usize,
+        avg: i64,
+        arr: [i64; n],
+    }
+    let n: usize = n;
+    let avg: i64 = avg;
+    let arr: Vec<i64> = arr;
 
-#[allow(dead_code)]
-fn practice_dp0() {
-//    let n: usize = 3;
-//    let arr = vec![7, 5, 3];
-//    let total = 10;
-    let n: usize = 2;
-    let arr = vec![9, 7];
-    let total = 6;
+    // left index, sum, number of cards
+    type Args = (usize, i64, usize);
 
-    let mut dp = vec![vec![false; total + 1]; n + 1];
-    dp[0][0] = true;
-
-    for i in 0..n {
-        for j in 0..total + 1 {
-            if j >= arr[i] {
-                dp[i + 1][j] = dp[i][j - arr[i]] || dp[i][j];
-            } else {
-                dp[i + 1][j] = dp[i][j];
+    struct Solver {
+        arr: Vec<i64>,
+        cache: HashMap<Args, usize>,
+    }
+    impl Solver {
+        fn solve(&mut self, args: Args) -> usize {
+            if self.cache.contains_key(&args) {
+                return *self.cache.get(&args).unwrap();
             }
+            let res = self.inner(args);
+            self.cache.insert(args, res);
+            res
+        }
+
+        fn inner(&mut self, args: Args) -> usize {
+            let (i, j, k) = args;
+            if i == 0 && j == 0 && k == 0 {
+                return 1;
+            }
+            if i >= 1 && j < self.arr[i - 1] {
+                return self.solve((i - 1, j, k));
+            }
+            if i >= 1 && k >= 1 && j >= self.arr[i - 1] {
+                let last = self.arr[i - 1];
+                let n0 = self.solve((i - 1, j - last, k - 1));
+                let n1 = self.solve((i - 1, j, k));
+                return n0 + n1;
+            }
+            0
         }
     }
 
-    println!("{:?}", dp);
-    println!("{:?}", dp[n][total]);
+    let cache = HashMap::new();
+    let mut solver = Solver { arr: arr, cache: cache };
+    let res: usize = (1..n + 1)
+        .map(|m| {
+            solver.solve((n, avg * m as i64, m))
+        })
+        .sum();
+    println!("{:?}", res);
 }
 
-#[allow(dead_code)]
-fn practice_dp1() {
-    let n: usize = 3;
-    let arr = vec![7, 5, 3];
-    let total = 10;
+//#[allow(dead_code)]
+//fn practice_dp0() {
+////    let n: usize = 3;
+////    let arr = vec![7, 5, 3];
+////    let total = 10;
 //    let n: usize = 2;
 //    let arr = vec![9, 7];
 //    let total = 6;
-
-    struct Solver {
-        arr: Vec<i32>,
-        cache: HashMap<(usize, i32), bool>,
-    }
-    impl Solver {
-        fn solve(&mut self, i: usize, j: i32) -> bool {
-            println!("{} {}", i, j);
-            match self.cache.get(&(i, j)) {
-                Some(res) => *res,
-                _ => {
-                    let res = self.inner(i, j);
-                    self.cache.insert((i, j), res);
-                    res
-                }
-            }
-        }
-
-        fn inner(&mut self, i: usize, j: i32) -> bool {
-            if i == 0 && j == 0 {
-                true
-            } else if i <= 0 {
-                false
-            } else if j >= self.arr[i - 1] {
-                self.solve(i - 1, j - self.arr[i - 1]) || self.solve(i - 1, j)
-            } else {
-                self.solve(i - 1, j)
-            }
-        }
-    }
-
-    let cache = HashMap::new();
-    let mut solver = Solver { arr, cache };
-    let res = solver.solve(n, total);
-    println!("{:?}", res);
-}
-
-#[allow(dead_code)]
-fn practice_dp2() {
-//    let n: usize = 5;
-//    let arr = vec![7, 5, 3, 1, 8];
-//    let total = 12;
-    let n: usize = 4;
-    let arr = vec![4, 1, 1, 1];
-    let total = 5;
-
-    type Args = (usize, i32);
-
-    struct Solver {
-        arr: Vec<i32>,
-        cache: HashMap<Args, u64>,
-    }
-    impl Solver {
-        fn solve(&mut self, args: Args) -> u64 {
+//
+//    let mut dp = vec![vec![false; total + 1]; n + 1];
+//    dp[0][0] = true;
+//
+//    for i in 0..n {
+//        for j in 0..total + 1 {
+//            if j >= arr[i] {
+//                dp[i + 1][j] = dp[i][j - arr[i]] || dp[i][j];
+//            } else {
+//                dp[i + 1][j] = dp[i][j];
+//            }
+//        }
+//    }
+//
+//    println!("{:?}", dp);
+//    println!("{:?}", dp[n][total]);
+//}
+//
+//#[allow(dead_code)]
+//fn practice_dp1() {
+//    let n: usize = 3;
+//    let arr = vec![7, 5, 3];
+//    let total = 10;
+////    let n: usize = 2;
+////    let arr = vec![9, 7];
+////    let total = 6;
+//
+//    struct Solver {
+//        arr: Vec<i32>,
+//        cache: HashMap<(usize, i32), bool>,
+//    }
+//    impl Solver {
+//        fn solve(&mut self, i: usize, j: i32) -> bool {
 //            println!("{} {}", i, j);
-            match self.cache.get(&args) {
-                Some(res) => *res,
-                _ => {
-                    let res = self.inner(args);
-                    self.cache.insert(args, res);
-                    res
-                }
-            }
-        }
-
-        fn inner(&mut self, args: Args) -> u64 {
-            let (i, j) = args;
-            if i == 0 && j == 0 {
-                1
-            } else if i == 0 {
-                0
-            } else if j >= self.arr[i - 1] {
-                self.solve((i - 1, j - self.arr[i - 1])) + self.solve((i - 1, j))
-            } else {
-                self.solve((i - 1, j))
-            }
-        }
-    }
-
-    let cache = HashMap::new();
-    let mut solver = Solver { arr, cache };
-    let res = solver.solve((n, total));
-    println!("{:?}", res);
-}
+//            match self.cache.get(&(i, j)) {
+//                Some(res) => *res,
+//                _ => {
+//                    let res = self.inner(i, j);
+//                    self.cache.insert((i, j), res);
+//                    res
+//                }
+//            }
+//        }
+//
+//        fn inner(&mut self, i: usize, j: i32) -> bool {
+//            if i == 0 && j == 0 {
+//                true
+//            } else if i <= 0 {
+//                false
+//            } else if j >= self.arr[i - 1] {
+//                self.solve(i - 1, j - self.arr[i - 1]) || self.solve(i - 1, j)
+//            } else {
+//                self.solve(i - 1, j)
+//            }
+//        }
+//    }
+//
+//    let cache = HashMap::new();
+//    let mut solver = Solver { arr: arr, cache: cache };
+//    let res = solver.solve(n, total);
+//    println!("{:?}", res);
+//}
+//
+//#[allow(dead_code)]
+//fn practice_dp2() {
+////    let n: usize = 5;
+////    let arr = vec![7, 5, 3, 1, 8];
+////    let total = 12;
+//    let n: usize = 4;
+//    let arr = vec![4, 1, 1, 1];
+//    let total = 5;
+//
+//    type Args = (usize, i32);
+//
+//    struct Solver {
+//        arr: Vec<i32>,
+//        cache: HashMap<Args, u64>,
+//    }
+//    impl Solver {
+//        fn solve(&mut self, args: Args) -> u64 {
+////            println!("{} {}", i, j);
+//            match self.cache.get(&args) {
+//                Some(res) => *res,
+//                _ => {
+//                    let res = self.inner(args);
+//                    self.cache.insert(args, res);
+//                    res
+//                }
+//            }
+//        }
+//
+//        fn inner(&mut self, args: Args) -> u64 {
+//            let (i, j) = args;
+//            if i == 0 && j == 0 {
+//                return 1;
+//            }
+//            if i == 0 {
+//                return 0;
+//            }
+//            if j >= self.arr[i - 1] {
+//                return self.solve((i - 1, j - self.arr[i - 1])) + self.solve((i - 1, j));
+//            }
+//            self.solve((i - 1, j))
+//        }
+//    }
+//
+//    let cache = HashMap::new();
+//    let mut solver = Solver { arr: arr, cache: cache };
+//    let res = solver.solve((n, total));
+//    println!("{:?}", res);
+//}
 
 fn main() {
-    practice_dp2()
+    arc060_a()
 }
 
