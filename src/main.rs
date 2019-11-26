@@ -1,7 +1,7 @@
 use std::cmp;
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Greater, Less};
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::f64::consts::PI;
 
 macro_rules! input {
@@ -1217,7 +1217,91 @@ fn arc026_4() {
     println!("{}", base);
 }
 
+#[allow(dead_code)]
+fn arc060_a() {
+    input! {
+        n: usize,
+        a: usize,
+        arr: [usize; n],
+    }
+    let n: usize = n;
+    let a: usize = a;
+    let arr: Vec<usize> = arr;
+//    println!("{} {} {:?}", n, a, arr);
+}
+
+fn practice_dp0() {
+//    let n: usize = 3;
+//    let arr = vec![7, 5, 3];
+//    let total = 10;
+    let n: usize = 2;
+    let arr = vec![9, 7];
+    let total = 6;
+
+    let mut dp = vec![vec![false; total + 1]; n + 1];
+    dp[0][0] = true;
+
+    for i in 0..n {
+        for j in 0..total + 1 {
+            if j >= arr[i] {
+                dp[i + 1][j] = dp[i][j - arr[i]] || dp[i][j];
+            } else {
+                dp[i + 1][j] = dp[i][j];
+            }
+        }
+    }
+
+    println!("{:?}", dp);
+    println!("{:?}", dp[n][total]);
+}
+
+fn practice_dp1() {
+    let n: usize = 3;
+    let arr = vec![7, 5, 3];
+    let total = 10;
+//    let n: usize = 2;
+//    let arr = vec![9, 7];
+//    let total = 6;
+
+    struct Solver {
+        n: usize,
+        arr: Vec<i32>,
+        total: i32,
+        cache: HashMap<(usize, i32), bool>,
+    }
+    impl Solver {
+        fn solve(&mut self, i: usize, j: i32) -> bool {
+            println!("{} {}", i, j);
+            match self.cache.get(&(i, j)) {
+                Some(res) => *res,
+                _ => {
+                    let res = self.inner(i, j);
+                    self.cache.insert((i, j), res);
+                    res
+                }
+            }
+        }
+
+        fn inner(&mut self, i: usize, j: i32) -> bool {
+            if i == 0 && j == 0 {
+                true
+            } else if i <= 0 {
+                false
+            } else if j >= self.arr[i - 1] {
+                self.solve(i - 1, j - self.arr[i - 1]) || self.solve(i - 1, j)
+            } else {
+                self.solve(i - 1, j)
+            }
+        }
+    }
+
+    let cache = HashMap::new();
+    let mut solver = Solver { n, arr, total, cache };
+    let res = solver.solve(n, total);
+    println!("{:?}", res);
+}
+
 fn main() {
-    arc026_4()
+    practice_dp1()
 }
 
