@@ -1266,9 +1266,7 @@ fn practice_dp1() {
 //    let total = 6;
 
     struct Solver {
-        n: usize,
         arr: Vec<i32>,
-        total: i32,
         cache: HashMap<(usize, i32), bool>,
     }
     impl Solver {
@@ -1298,7 +1296,7 @@ fn practice_dp1() {
     }
 
     let cache = HashMap::new();
-    let mut solver = Solver { n, arr, total, cache };
+    let mut solver = Solver { arr, cache };
     let res = solver.solve(n, total);
     println!("{:?}", res);
 }
@@ -1315,9 +1313,7 @@ fn practice_dp2() {
     type Args = (usize, i32);
 
     struct Solver {
-        n: usize,
         arr: Vec<i32>,
-        total: i32,
         cache: HashMap<Args, u64>,
     }
     impl Solver {
@@ -1348,7 +1344,7 @@ fn practice_dp2() {
     }
 
     let cache = HashMap::new();
-    let mut solver = Solver { n, arr, total, cache };
+    let mut solver = Solver { arr, cache };
     let res = solver.solve((n, total));
     println!("{:?}", res);
 }
