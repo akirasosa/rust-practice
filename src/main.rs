@@ -1219,17 +1219,18 @@ fn arc026_4() {
 
 #[allow(dead_code)]
 fn arc060_a() {
-    input! {
-        n: usize,
-        a: usize,
-        arr: [usize; n],
-    }
-    let n: usize = n;
-    let a: usize = a;
-    let arr: Vec<usize> = arr;
+//    input! {
+//        n: usize,
+//        a: usize,
+//        arr: [usize; n],
+//    }
+//    let n: usize = n;
+//    let a: usize = a;
+//    let arr: Vec<usize> = arr;
 //    println!("{} {} {:?}", n, a, arr);
 }
 
+#[allow(dead_code)]
 fn practice_dp0() {
 //    let n: usize = 3;
 //    let arr = vec![7, 5, 3];
@@ -1255,6 +1256,7 @@ fn practice_dp0() {
     println!("{:?}", dp[n][total]);
 }
 
+#[allow(dead_code)]
 fn practice_dp1() {
     let n: usize = 3;
     let arr = vec![7, 5, 3];
@@ -1301,7 +1303,57 @@ fn practice_dp1() {
     println!("{:?}", res);
 }
 
+#[allow(dead_code)]
+fn practice_dp2() {
+//    let n: usize = 5;
+//    let arr = vec![7, 5, 3, 1, 8];
+//    let total = 12;
+    let n: usize = 4;
+    let arr = vec![4, 1, 1, 1];
+    let total = 5;
+
+    type Args = (usize, i32);
+
+    struct Solver {
+        n: usize,
+        arr: Vec<i32>,
+        total: i32,
+        cache: HashMap<Args, u64>,
+    }
+    impl Solver {
+        fn solve(&mut self, args: Args) -> u64 {
+//            println!("{} {}", i, j);
+            match self.cache.get(&args) {
+                Some(res) => *res,
+                _ => {
+                    let res = self.inner(args);
+                    self.cache.insert(args, res);
+                    res
+                }
+            }
+        }
+
+        fn inner(&mut self, args: Args) -> u64 {
+            let (i, j) = args;
+            if i == 0 && j == 0 {
+                1
+            } else if i == 0 {
+                0
+            } else if j >= self.arr[i - 1] {
+                self.solve((i - 1, j - self.arr[i - 1])) + self.solve((i - 1, j))
+            } else {
+                self.solve((i - 1, j))
+            }
+        }
+    }
+
+    let cache = HashMap::new();
+    let mut solver = Solver { n, arr, total, cache };
+    let res = solver.solve((n, total));
+    println!("{:?}", res);
+}
+
 fn main() {
-    practice_dp1()
+    practice_dp2()
 }
 
