@@ -3,6 +3,7 @@ use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Greater, Less};
 use std::collections::{HashMap, HashSet};
 use std::f64::consts::PI;
+use std::ops::{AddAssign, Sub};
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -260,6 +261,46 @@ impl UnionFind {
     }
 }
 
+pub struct BinaryIndexTree<T> {
+    data: Vec<T>,
+}
+
+impl<T> BinaryIndexTree<T>
+    where
+        T: Copy + AddAssign + Sub<Output=T> + Default,
+{
+    pub fn new(size: usize) -> Self {
+        let buf_size = size.next_power_of_two();
+        BinaryIndexTree {
+            data: vec![T::default(); buf_size + 1],
+        }
+    }
+
+    pub fn range_sum(&self, l: usize, r: usize) -> T {
+        self.sum(r - 1) - self.sum(l - 1)
+    }
+
+    pub fn sum(&self, i: usize) -> T {
+        let mut i = i as i64;
+        let mut ret = T::default();
+        while i > 0 {
+            ret += self.data[i as usize];
+            i -= i & -i;
+        }
+        ret
+    }
+
+    pub fn add(&mut self, i: usize, value: T) {
+        assert!(i > 0);
+        let n = self.data.len() as i64;
+        let mut i = i as i64;
+        while i <= n - 1 {
+            self.data[i as usize] += value;
+            i += i & -i;
+        }
+    }
+}
+
 #[inline]
 fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     debug_assert!(min <= max, "min must be less than or equal to max");
@@ -270,6 +311,18 @@ fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     } else {
         input
     }
+}
+
+#[inline]
+fn coord_compress<T: std::clone::Clone + std::cmp::Ord>(src: Vec<T>) -> Vec<usize> {
+    let mut tmp = src.clone();
+    tmp.sort();
+    tmp.dedup();
+    src.iter()
+        .map(|x| {
+            tmp.binary_search(x).unwrap()
+        })
+        .collect()
 }
 
 #[inline]
@@ -1298,102 +1351,38 @@ fn arc060_a() {
 //    println!("{:?}", dp);
 //    println!("{:?}", dp[n][total]);
 //}
-//
-//#[allow(dead_code)]
-//fn practice_dp1() {
-//    let n: usize = 3;
-//    let arr = vec![7, 5, 3];
-//    let total = 10;
-////    let n: usize = 2;
-////    let arr = vec![9, 7];
-////    let total = 6;
-//
-//    struct Solver {
-//        arr: Vec<i32>,
-//        cache: HashMap<(usize, i32), bool>,
-//    }
-//    impl Solver {
-//        fn solve(&mut self, i: usize, j: i32) -> bool {
-//            println!("{} {}", i, j);
-//            match self.cache.get(&(i, j)) {
-//                Some(res) => *res,
-//                _ => {
-//                    let res = self.inner(i, j);
-//                    self.cache.insert((i, j), res);
-//                    res
-//                }
-//            }
-//        }
-//
-//        fn inner(&mut self, i: usize, j: i32) -> bool {
-//            if i == 0 && j == 0 {
-//                true
-//            } else if i <= 0 {
-//                false
-//            } else if j >= self.arr[i - 1] {
-//                self.solve(i - 1, j - self.arr[i - 1]) || self.solve(i - 1, j)
-//            } else {
-//                self.solve(i - 1, j)
-//            }
-//        }
-//    }
-//
-//    let cache = HashMap::new();
-//    let mut solver = Solver { arr: arr, cache: cache };
-//    let res = solver.solve(n, total);
-//    println!("{:?}", res);
-//}
-//
-//#[allow(dead_code)]
-//fn practice_dp2() {
-////    let n: usize = 5;
-////    let arr = vec![7, 5, 3, 1, 8];
-////    let total = 12;
-//    let n: usize = 4;
-//    let arr = vec![4, 1, 1, 1];
-//    let total = 5;
-//
-//    type Args = (usize, i32);
-//
-//    struct Solver {
-//        arr: Vec<i32>,
-//        cache: HashMap<Args, u64>,
-//    }
-//    impl Solver {
-//        fn solve(&mut self, args: Args) -> u64 {
-////            println!("{} {}", i, j);
-//            match self.cache.get(&args) {
-//                Some(res) => *res,
-//                _ => {
-//                    let res = self.inner(args);
-//                    self.cache.insert(args, res);
-//                    res
-//                }
-//            }
-//        }
-//
-//        fn inner(&mut self, args: Args) -> u64 {
-//            let (i, j) = args;
-//            if i == 0 && j == 0 {
-//                return 1;
-//            }
-//            if i == 0 {
-//                return 0;
-//            }
-//            if j >= self.arr[i - 1] {
-//                return self.solve((i - 1, j - self.arr[i - 1])) + self.solve((i - 1, j));
-//            }
-//            self.solve((i - 1, j))
-//        }
-//    }
-//
-//    let cache = HashMap::new();
-//    let mut solver = Solver { arr: arr, cache: cache };
-//    let res = solver.solve((n, total));
-//    println!("{:?}", res);
-//}
+
+#[allow(dead_code)]
+fn arc075_c() {
+    input! {
+        n: usize,
+        k: i64,
+        aa: [i64; n],
+    }
+    let k: i64 = k;
+    let aa: Vec<i64> = aa;
+
+    let aa = aa.iter()
+        .scan(0i64, |state, a| {
+            *state += a - k;
+            Some(*state)
+        })
+        .collect();
+    let aa = [vec![0], aa].concat();
+    let aa = coord_compress(aa);
+
+    let mut bit = BinaryIndexTree::new(aa.len());
+    let res = aa.iter()
+        .fold(0usize, |acc, &x| {
+            let acc = acc + bit.sum(x + 1);
+            bit.add(x + 1, 1);
+            acc
+        });
+
+    println!("{:?}", res);
+}
 
 fn main() {
-    arc060_a()
+    arc075_c()
 }
 
