@@ -1382,7 +1382,46 @@ fn arc075_c() {
     println!("{:?}", res);
 }
 
+#[allow(dead_code)]
+fn abc032_c() {
+    input! {
+        n: usize,
+        k: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let k: usize = k;
+    let aa: Vec<usize> = aa;
+
+    let mut res = 0;
+    let mut r = 0;
+    let mut prod = 1;
+
+    for l in 0..n {
+        while r < n && prod * aa[r] <= k {
+            if aa[r] == 0 {
+                println!("{}", n);
+                return
+            }
+            prod *= aa[r];
+            r += 1;
+        }
+
+        if r - l > res {
+            res = r - l;
+        }
+
+        if r == l {
+            r += 1;
+        } else {
+            prod /= aa[l];
+        }
+    }
+
+    println!("{}", res);
+}
+
 fn main() {
-    arc075_c()
+    arc037_c()
 }
 
