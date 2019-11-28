@@ -1401,7 +1401,7 @@ fn abc032_c() {
         while r < n && prod * aa[r] <= k {
             if aa[r] == 0 {
                 println!("{}", n);
-                return
+                return;
             }
             prod *= aa[r];
             r += 1;
@@ -1421,7 +1421,72 @@ fn abc032_c() {
     println!("{}", res);
 }
 
+#[allow(dead_code)]
+fn abc038_c() {
+    input! {
+        n: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let aa: Vec<usize> = aa;
+
+    let mut res = 0;
+    let mut r = 0;
+    let mut is_mi = false;
+
+    for l in 0..n {
+        while r < n && (r == l || (is_mi && (aa[r - 1] < aa[r]))) {
+            is_mi = true;
+            r += 1;
+        }
+
+        res += r - l;
+
+        if r == l {
+            r += 1;
+        } else {
+            is_mi = l == n - 1 || is_mi && (aa[l] < aa[l + 1]);
+        }
+    }
+
+    println!("{}", res);
+}
+
+#[allow(dead_code)]
+fn arc098_b() {
+    input! {
+        n: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let aa: Vec<usize> = aa;
+
+    let mut res = 0;
+    let mut r = 0;
+    let mut sum = 0;
+    let mut xor = 0;
+
+    for l in 0..n {
+        while r < n && (xor ^ aa[r] == sum + aa[r]) {
+            xor ^= aa[r];
+            sum += aa[r];
+            r += 1;
+        }
+
+        res += r - l;
+
+        if r == l {
+            r += 1;
+        } else {
+            xor ^= aa[l];
+            sum -= aa[l];
+        }
+    }
+
+    println!("{}", res);
+}
+
 fn main() {
-    arc037_c()
+    arc098_b()
 }
 
