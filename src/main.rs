@@ -1486,7 +1486,38 @@ fn arc098_b() {
     println!("{}", res);
 }
 
+#[allow(dead_code)]
+fn arc022_2() {
+    input! {
+        n: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let aa: Vec<usize> = aa;
+
+    let mut res = 0;
+    let mut r = 0;
+    let mut state: HashSet<usize> = HashSet::new();
+
+    for l in 0..n {
+        while r < n && !state.contains(&aa[r]) {
+            state.insert(aa[r]);
+            r += 1;
+        }
+
+        res = max(r - l, res);
+
+        if r == l {
+            r += 1;
+        } else {
+            state.remove(&aa[l]);
+        }
+    }
+
+    println!("{}", res);
+}
+
 fn main() {
-    arc098_b()
+    arc022_2()
 }
 
