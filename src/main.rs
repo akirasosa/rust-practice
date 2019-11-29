@@ -1517,7 +1517,43 @@ fn arc022_2() {
     println!("{}", res);
 }
 
+#[allow(dead_code)]
+fn abc017_4() {
+    input! {
+        n: usize,
+        m: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let aa: Vec<usize> = aa;
+
+    let mut r = 0;
+    let mut state: HashSet<usize> = HashSet::new();
+    let mut bi = BinaryIndexTree::new(n + 1);
+    let mut res = 0;
+    bi.add(1, 1usize);
+
+    for l in 0..n {
+        while r < n && !state.contains(&aa[r]) {
+            state.insert(aa[r]);
+            r += 1;
+
+            let s = bi.range_sum(l + 1, r + 1) % 1000000007;
+            bi.add(r + 1, s);
+            res = s;
+        }
+
+        if r == l {
+            r += 1;
+        } else {
+            state.remove(&aa[l]);
+        }
+    }
+
+    println!("{}", res);
+}
+
 fn main() {
-    arc022_2()
+    abc017_4()
 }
 
