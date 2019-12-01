@@ -1659,7 +1659,6 @@ fn arc064_a() {
         }
     }
 
-//    println!("{} {} {:?} {:?} {}", n, x, aa, bb, bb.iter().sum::<usize>());
     println!("{}", bb.iter().sum::<usize>());
 }
 
