@@ -1638,7 +1638,32 @@ fn abc033_d() {
     println!("{} {} {}", n_lt_90, n_eq_90, n_gt_90);
 }
 
+#[allow(dead_code)]
+fn arc064_a() {
+    input! {
+        n: usize,
+        x: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let x: usize = x;
+    let aa: Vec<usize> = [vec![0], aa].concat();
+    let mut bb: Vec<usize> = vec![0; n + 1];
+
+    for i in 0..n {
+        let xi = x - (aa[i] - bb[i]);
+        bb[i + 1] = if aa[i + 1] > xi {
+            aa[i + 1] - xi
+        } else {
+            0
+        }
+    }
+
+//    println!("{} {} {:?} {:?} {}", n, x, aa, bb, bb.iter().sum::<usize>());
+    println!("{}", bb.iter().sum::<usize>());
+}
+
 fn main() {
-    abc033_d();
+    arc064_a();
 }
 
