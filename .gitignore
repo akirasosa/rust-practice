@@ -10,3 +10,5 @@ target
 
 #/target
 #**/*.rs.bk
+
+input.txt
