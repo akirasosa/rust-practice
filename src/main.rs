@@ -1521,7 +1521,6 @@ fn arc022_2() {
 fn abc017_4() {
     input! {
         n: usize,
-        m: usize,
         aa: [usize; n],
     }
     let n: usize = n;
@@ -1553,7 +1552,93 @@ fn abc017_4() {
     println!("{}", res);
 }
 
+
+#[allow(dead_code)]
+fn abc033_d() {
+    input! {
+        n: usize,
+        aa: [(i64, i64); n],
+    }
+    let n: usize = n;
+    let aa: Vec<(i64, i64)> = aa;
+
+    fn prod(a: (i64, i64), b: (i64, i64)) -> i64 {
+        a.0 * b.0 + a.1 * b.1
+    }
+
+    fn is_lte_90(a: (f64, (i64, i64)), b: (f64, (i64, i64))) -> bool {
+        let (rad_a, vec_a) = a;
+        let (rad_b, vec_b) = b;
+        rad_b - rad_a < PI && prod(vec_a, vec_b) >= 0
+    };
+
+    let count = |i: usize| {
+        let o = &aa[i];
+        let mut rads_vecs: Vec<(f64, (i64, i64))> = aa.iter()
+            .filter(|&a| a != o)
+            .map(|a| {
+                let &(x0, y0) = o;
+                let &(x1, y1) = a;
+                let rad = ((y1 - y0) as f64).atan2((x1 - x0) as f64);
+                let v = (x1 - x0, y1 - y0);
+                if rad < 0.0 {
+                    (2. * PI + rad, v)
+                } else {
+                    (rad, v)
+                }
+            })
+            .collect();
+        rads_vecs.sort_by(|a, b| {
+            a.0.partial_cmp(&b.0).unwrap()
+        });
+        let rads_vecs: Vec<(f64, (i64, i64))> = rads_vecs.iter()
+            .map(|&(rad, vec)| {
+                (rad - 2. * PI, vec)
+            })
+            .chain(rads_vecs.iter().cloned())
+            .collect();
+
+        let n = rads_vecs.len();
+        let mut r = 0;
+        let mut n_lt_90 = 0;
+        let mut n_eq_90 = 0;
+
+        for l in 0..(n / 2) {
+            while r < n && is_lte_90(rads_vecs[l], rads_vecs[r]) {
+                r += 1;
+            }
+
+            let vec_a = rads_vecs[l].1;
+            let vec_b = rads_vecs[r - 1].1;
+            if prod(vec_a, vec_b) == 0 {
+                n_eq_90 += 1;
+                n_lt_90 += r - l - 2;
+            } else {
+                n_lt_90 += r - l - 1;
+            }
+
+            if r == l {
+                r += 1;
+            }
+        }
+
+        let n_gt_90 = (n / 2) * (n / 2 - 1) / 2 - n_lt_90 - n_eq_90;
+        (n_lt_90, n_eq_90, n_gt_90)
+    };
+
+    let mut n_eq_90 = 0;
+    let mut n_gt_90 = 0;
+    for i in 0..n {
+        let cnt = count(i);
+        n_eq_90 += cnt.1;
+        n_gt_90 += cnt.2;
+    }
+    let n_lt_90 = n * (n - 1) * (n - 2) / 6 - n_eq_90 - n_gt_90;
+
+    println!("{} {} {}", n_lt_90, n_eq_90, n_gt_90);
+}
+
 fn main() {
-    abc017_4()
+    abc033_d();
 }
 
