@@ -49,3 +49,15 @@ fn test_3() {
         .is("7")
         .unwrap();
 }
+
+#[test]
+fn test_4() {
+    let stdin = r#"
+1111
+    "#;
+    assert_cli::Assert::cargo_binary(NAME)
+        .stdin(stdin)
+        .stdout()
+        .is("4")
+        .unwrap();
+}

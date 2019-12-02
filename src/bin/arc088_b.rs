@@ -359,12 +359,19 @@ fn main() {
     let aa: Vec<char> = aa;
     let n = aa.len();
 
-    let mut res = n;
-    for i in 1..n {
-        if aa[i - 1] != aa[i] {
-            res = min(max(i, n - i), res);
-        }
-    }
+    let aa: Vec<char> = [vec!['x'], aa].concat();
+
+    let res: usize = aa
+        .windows(2)
+        .enumerate()
+        .filter(|&(_i, w)| {
+            w[0] != w[1]
+        })
+        .map(|(i, _w)| {
+            max(i, n - i)
+        })
+        .min()
+        .unwrap();
 
     println!("{:?}", res);
 }
