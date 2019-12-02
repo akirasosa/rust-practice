@@ -1,4 +1,7 @@
-use std::cmp;
+#![allow(unused_imports)]
+#![allow(dead_code)]
+#![allow(unused_macros)]
+
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Greater, Less};
 use std::collections::{HashMap, HashSet};
@@ -340,8 +343,16 @@ fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool
     base + !query_fn(base) as i64
 }
 
-#[allow(dead_code)]
-fn arc064_a() {
+#[inline]
+fn rel<T: PartialOrd + Default>(n: T) -> T {
+    if n < T::default() {
+        T::default()
+    } else {
+        n
+    }
+}
+
+fn main() {
     input! {
         n: usize,
         x: usize,
@@ -363,8 +374,3 @@ fn arc064_a() {
 
     println!("{}", bb.iter().sum::<usize>());
 }
-
-fn main() {
-    arc064_a();
-}
-
