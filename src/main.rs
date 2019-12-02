@@ -341,46 +341,6 @@ fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool
 }
 
 #[allow(dead_code)]
-fn arc050_b() {
-    input! {
-        n_r: u64,
-        n_b: u64,
-        x: u64,
-        y: u64,
-    }
-    let n_r: u64 = n_r;
-    let n_b: u64 = n_b;
-    let x: u64 = x;
-    let y: u64 = y;
-
-    let is_possible_to_make = |total: u64| -> bool{
-        let mut n_r_remain = n_r;
-        let mut n_b_remain = n_b;
-        if n_r_remain < total || n_b_remain < total {
-            return false;
-        }
-        n_r_remain -= total;
-        n_b_remain -= total;
-        n_r_remain / (x - 1) + n_b_remain / (y - 1) >= total
-    };
-
-    let l = min(n_r / x, n_b / y);
-    let r = (n_r / x + n_b / y) + 1;
-    let mut size = r - l;
-    let mut base = l;
-    while size > 1 {
-        let half = size / 2;
-        let mid = base + half;
-        if is_possible_to_make(mid) {
-            base = mid;
-        }
-        size -= half;
-    }
-
-    println!("{}", base);
-}
-
-#[allow(dead_code)]
 fn abc026_d() {
     input! {
         a: f64,
