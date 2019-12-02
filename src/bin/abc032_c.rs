@@ -2,6 +2,7 @@
 #![allow(dead_code)]
 #![allow(unused_macros)]
 
+use std::cmp;
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Greater, Less};
 use std::collections::{HashMap, HashSet};
@@ -353,11 +354,39 @@ fn rel<T: PartialOrd + Default>(n: T) -> T {
 }
 
 fn main() {
-//    input! {
-//        n: usize,
-//        m: usize,
-//        aa: [usize; n],
-//    }
-//    println!("{} {} {:?}", n, m, aa);
-    println!("Hello World!");
+    input! {
+        n: usize,
+        k: usize,
+        aa: [usize; n],
+    }
+    let n: usize = n;
+    let k: usize = k;
+    let aa: Vec<usize> = aa;
+
+    let mut res = 0;
+    let mut r = 0;
+    let mut prod = 1;
+
+    for l in 0..n {
+        while r < n && prod * aa[r] <= k {
+            if aa[r] == 0 {
+                println!("{}", n);
+                return;
+            }
+            prod *= aa[r];
+            r += 1;
+        }
+
+        if r - l > res {
+            res = r - l;
+        }
+
+        if r == l {
+            r += 1;
+        } else {
+            prod /= aa[l];
+        }
+    }
+
+    println!("{}", res);
 }
