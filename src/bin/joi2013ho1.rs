@@ -357,32 +357,36 @@ fn main() {
         n: usize,
         aa: [u8; n],
     }
-//    println!("{} {:?}", n, aa);
-
     let n: usize = n;
-    let mut aa: Vec<u8> = aa;
-    let last = *aa.last().unwrap();
-    aa.push(last);
+    let aa: Vec<u8> = aa;
 
-    let mut bb: Vec<usize> = vec![];
-    let mut cnt = 0;
-    for i in 1..aa.len() {
-        cnt += 1;
-        if aa[i - 1] == aa[i] {
-            bb.push(cnt);
-            cnt = 0;
-        }
-    }
-//    println!("{} {:?}", n, bb);
+    let (first, last) = (aa[0], aa[n - 1]);
+    let aa: Vec<u8> = [vec![first], aa, vec![last]].concat();
 
-    if bb.len() <= 2 {
+    let bb = aa
+        .windows(2)
+        .enumerate()
+        .filter(|&(_i, w)| {
+            w[0] == w[1]
+        })
+        .map(|(i, _w)| i)
+        .collect::<Vec<usize>>()
+        .windows(2)
+        .map(|w| {
+            w[1] - w[0]
+        })
+        .collect::<Vec<usize>>();
+
+    if bb.len() <= 3 {
         println!("{}", bb.iter().sum::<usize>());
         return;
     }
 
-    let mut res = 0;
-    for i in 0..bb.len() - 2 {
-        res = max(res, bb[i] + bb[i + 1] + bb[i + 2]);
-    }
+    let res: usize = bb
+        .windows(3)
+        .map(|w| w.iter().sum())
+        .max()
+        .unwrap();
+
     println!("{}", res);
 }
