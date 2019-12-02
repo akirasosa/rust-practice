@@ -355,10 +355,10 @@ fn rel<T: PartialOrd + Default>(n: T) -> T {
 fn main() {
     input! {
         n: usize,
-        arr: [(usize, usize); n],
+        arr: [(i64, i64); n],
     }
-    let n: usize = n;
-    let arr: Vec<(usize, usize)> = arr;
+    let n: i64 = n as i64;
+    let arr: Vec<(i64, i64)> = arr;
 
     let max_height = arr.iter()
         .map(|&(x, v)| {
@@ -367,16 +367,16 @@ fn main() {
         .max()
         .unwrap();
 
-    let remaining_times_at = |height: i64| {
+    let estimate_times_at = |height: i64| {
         arr.iter()
             .map(|&(x, v)| {
-                (height - x as i64) / v as i64
+                (height - x) / v
             })
             .collect::<Vec<i64>>()
     };
 
     let is_possible_with = |height: i64| {
-        let times = remaining_times_at(height);
+        let times = estimate_times_at(height);
         let mut times: Vec<(usize, i64)> = times.into_iter().enumerate().collect();
         times.sort_by(|&a, &b| { a.1.cmp(&b.1) });
 
@@ -388,14 +388,14 @@ fn main() {
         (is_possible, order)
     };
 
-    let found_height = binary_search(0, max_height as i64, |x| {
+    let found_height = binary_search(0, max_height, |x| {
         is_possible_with(x).0
     });
 
     let order = is_possible_with(found_height).1;
     let res = order.iter().enumerate()
         .map(|(i, &j)| {
-            arr[j].0 + arr[j].1 * i
+            arr[j].0 + arr[j].1 * i as i64
         })
         .max()
         .unwrap();
