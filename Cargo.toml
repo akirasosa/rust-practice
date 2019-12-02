@@ -8,6 +8,9 @@ edition = "2018"
 
 [dependencies]
 
+[dev-dependencies]
+assert_cli = "0.6.3"
+
 [[bin]]
 name = "template"
 path = "src/template.rs"
