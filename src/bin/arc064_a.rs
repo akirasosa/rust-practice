@@ -358,19 +358,21 @@ fn main() {
         x: usize,
         aa: [usize; n],
     }
-    let n: usize = n;
     let x: usize = x;
     let aa: Vec<usize> = [vec![0], aa].concat();
-    let mut bb: Vec<usize> = vec![0; n + 1];
 
-    for i in 0..n {
-        let xi = x - (aa[i] - bb[i]);
-        bb[i + 1] = if aa[i + 1] > xi {
-            aa[i + 1] - xi
-        } else {
-            0
-        }
-    }
+    let res: usize = aa
+        .windows(2)
+        .scan(0usize, |state, w| {
+            let xi = x - (w[0] - *state);
+            *state = if w[1] > xi {
+                w[1] - xi
+            } else {
+                0
+            };
+            Some(*state)
+        })
+        .sum();
 
-    println!("{}", bb.iter().sum::<usize>());
+    println!("{:?}", res);
 }
