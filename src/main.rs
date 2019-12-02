@@ -341,37 +341,6 @@ fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool
 }
 
 #[allow(dead_code)]
-fn abc026_d() {
-    input! {
-        a: f64,
-        b: f64,
-        c: f64,
-    }
-    let a: f64 = a;
-    let b: f64 = b;
-    let c: f64 = c;
-
-    let query = |t: f64| -> f64 {
-        a * t + b * (c * t * PI).sin()
-    };
-
-    let l = (100. - b) / a;
-    let r = (100. + b) / a;
-    let mut size = r - l;
-    let mut base = l;
-    while (query(base) - 100.).abs() > 1e-6 {
-        let half = size / 2.;
-        let mid = base + half;
-        if query(mid) < 100. {
-            base = mid;
-        }
-        size -= half;
-    }
-
-    println!("{}", base);
-}
-
-#[allow(dead_code)]
 fn codefestival_2015_qual_a_d() {
     input! {
         n: i64,
