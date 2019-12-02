@@ -357,15 +357,15 @@ fn main() {
     input! {
         n: usize,
         k: usize,
-        arr: [[f64; 2]; n],
+        arr: [(f64, f64); n],
     }
     let k: usize = k;
-    let arr: Vec<Vec<f64>> = arr;
+    let arr: Vec<(f64, f64)> = arr;
 
     let query = |x: f64| {
         let mut items: Vec<f64> = arr.iter()
             .map(|a| {
-                a[0] * (a[1] - x)
+                a.0 * (a.1 - x)
             })
             .collect();
         items.sort_by(|a, b| b.partial_cmp(a).unwrap());
