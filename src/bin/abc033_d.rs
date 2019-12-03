@@ -377,13 +377,9 @@ fn main() {
             .map(|a| {
                 let &(x0, y0) = o;
                 let &(x1, y1) = a;
-                let rad = ((y1 - y0) as f64).atan2((x1 - x0) as f64);
                 let v = (x1 - x0, y1 - y0);
-                if rad < 0.0 {
-                    (2. * PI + rad, v)
-                } else {
-                    (rad, v)
-                }
+                let rad = (v.1 as f64).atan2(v.0 as f64);
+                (rad, v)
             })
             .collect();
         rads_vecs.sort_by(|a, b| {
