@@ -361,23 +361,15 @@ fn main() {
     }
     let aa: Vec<Vec<u8>> = aa;
 
-    let bb: Vec<Vec<bool>> = (0..1 << n)
-        .map(|i| {
-            format!("{:010b}", i).chars()
-                .rev()
-                .map(|c| c == '1')
-                .collect()
-        })
-        .collect();
-
     let mut res = 0;
-    for b in bb {
+
+    for x in 0..1 << n {
         let tmp = (0..m)
             .map(|j| {
                 let s = (0..n)
                     .map(|i| {
                         let bit0 = aa[i][j] == 1;
-                        let bit1 = b[i];
+                        let bit1 = x & (1 << i) > 0;
                         (bit0 ^ bit1) as usize
                     })
                     .sum::<usize>();
