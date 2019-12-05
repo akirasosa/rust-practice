@@ -1,28 +1,29 @@
-fn main() {
-//    for i in 0..1 << 10 {
-//        println!("{}", i)
-//    }
-    let test1: Vec<Vec<usize>> = (0..1 << 3)
-        .filter(|i: &usize| i.count_ones() == 2)
-        .map(|i| {
-            format!("{:018b}", i).chars()
-                .rev()
-                .map(|c| (c == '1') as usize)
-                .collect()
-        })
-        .collect();
+#![allow(unused_imports)]
+#![allow(non_snake_case)]
 
-    println!("{:?}", test1);
+use std::cmp::*;
+use std::collections::*;
+use std::io::Write;
 
-    let test2: Vec<usize> = (0..1 << 3)
-        .filter(|i: &usize| i.count_ones() == 2)
-        .collect();
-    println!("{:?}", test2);
+#[allow(unused_macros)]
+macro_rules! debug {
+    ($($e:expr),*) => {
+        #[cfg(debug_assertions)]
+        $({
+            let (e, mut err) = (stringify!($e), std::io::stderr());
+            writeln!(err, "{} = {:?}", e, $e).unwrap()
+        })*
+    };
+}
 
-    for t in test2 {
-        println!("{:03b}", t);
-        for i in 0..3 {
-            println!("{}", t & (1 << i) > 0);
-        }
+pub fn div_euclid(a: i64, rhs: i64) -> i64{
+    let q = a / rhs;
+    if a % rhs < 0 {
+        return if rhs > 0 { q - 1 } else { q + 1 }
     }
+    q
+}
+
+fn main() {
+    debug!(div_euclid(21, 20));
 }

@@ -4,9 +4,10 @@
 #![allow(non_snake_case)]
 
 use std::cmp::{max, min};
-use std::cmp::Ordering::{self, Greater, Less};
+use std::cmp::Ordering::{self, Equal, Greater, Less};
 use std::collections::{HashMap, HashSet};
 use std::f64::consts::PI;
+use std::io::Write;
 use std::ops::{AddAssign, Sub};
 
 macro_rules! input {
@@ -58,7 +59,17 @@ macro_rules! read_value {
     };
 }
 
-pub trait Ext {
+macro_rules! debug {
+    ($($e:expr),*) => {
+        #[cfg(debug_assertions)]
+        $({
+            let (e, mut err) = (stringify!($e), std::io::stderr());
+            writeln!(err, "{} = {:?}", e, $e).unwrap()
+        })*
+    };
+}
+
+trait Ext {
     type Item;
 
     fn lower_bound(&self, x: &Self::Item) -> usize
@@ -218,23 +229,23 @@ impl<T> Ext for [T] {
     }
 }
 
-pub struct UnionFind {
+struct UnionFind {
     parts: Vec<usize>
 }
 
 impl UnionFind {
-    pub fn new(n: usize) -> UnionFind {
+    fn new(n: usize) -> UnionFind {
         let parts = (0..n).collect();
         UnionFind { parts: parts }
     }
 
-    pub fn union(&mut self, i: usize, j: usize) {
+    fn union(&mut self, i: usize, j: usize) {
         let i_leader = self.find(i);
         let j_leader = self.find(j);
         self.parts[j_leader] = self.parts[i_leader];
     }
 
-    pub fn find(&mut self, i: usize) -> usize {
+    fn find(&mut self, i: usize) -> usize {
         let mut p = i;
         while self.parts[p] != p {
             p = self.parts[p]
@@ -248,7 +259,7 @@ impl UnionFind {
         p
     }
 
-    pub fn find_only(&self, i: usize) -> usize {
+    fn find_only(&self, i: usize) -> usize {
         let mut p = i;
         while self.parts[p] != p {
             p = self.parts[p]
@@ -256,16 +267,16 @@ impl UnionFind {
         p
     }
 
-    pub fn same(&mut self, i: usize, j: usize) -> bool {
+    fn same(&mut self, i: usize, j: usize) -> bool {
         self.find(i) == self.find(j)
     }
 
-    pub fn same_only(&self, i: usize, j: usize) -> bool {
+    fn same_only(&self, i: usize, j: usize) -> bool {
         self.find_only(i) == self.find_only(j)
     }
 }
 
-pub struct BinaryIndexTree<T> {
+struct BinaryIndexTree<T> {
     data: Vec<T>,
 }
 
@@ -273,18 +284,18 @@ impl<T> BinaryIndexTree<T>
     where
         T: Copy + AddAssign + Sub<Output=T> + Default,
 {
-    pub fn new(size: usize) -> Self {
+    fn new(size: usize) -> Self {
         let buf_size = size.next_power_of_two();
         BinaryIndexTree {
             data: vec![T::default(); buf_size + 1],
         }
     }
 
-    pub fn range_sum(&self, l: usize, r: usize) -> T {
+    fn range_sum(&self, l: usize, r: usize) -> T {
         self.sum(r - 1) - self.sum(l - 1)
     }
 
-    pub fn sum(&self, i: usize) -> T {
+    fn sum(&self, i: usize) -> T {
         let mut i = i as i64;
         let mut ret = T::default();
         while i > 0 {
@@ -294,7 +305,7 @@ impl<T> BinaryIndexTree<T>
         ret
     }
 
-    pub fn add(&mut self, i: usize, value: T) {
+    fn add(&mut self, i: usize, value: T) {
         assert!(i > 0);
         let n = self.data.len() as i64;
         let mut i = i as i64;
@@ -353,12 +364,61 @@ fn rel<T: PartialOrd + Default>(n: T) -> T {
     }
 }
 
-fn main() {
-//    input! {
-//        n: usize,
-//        m: usize,
-//        aa: [usize; n],
-//    }
-//    println!("{} {} {:?}", n, m, aa);
-    println!("Hello World!");
+#[inline]
+fn rem_euclid(a: i64, rhs: i64) -> i64 {
+    let r = a % rhs;
+    if r < 0 {
+        if rhs < 0 {
+            r - rhs
+        } else {
+            r + rhs
+        }
+    } else {
+        r
+    }
 }
+
+#[inline]
+fn div_euclid(a: i64, rhs: i64) -> i64 {
+    let q = a / rhs;
+    if a % rhs < 0 {
+        return if rhs > 0 { q - 1 } else { q + 1 };
+    }
+    q
+}
+
+fn main() {
+    input! {
+        N: isize,
+        L: i64,
+        T: i64,
+        aa: [(i64, i64); N],
+    }
+    let N: isize = N;
+    let L: i64 = L;
+    let T: i64 = T;
+    let aa: Vec<(i64, i64)> = aa;
+
+    let mut bb = vec![];
+    let mut shift = 0;
+    for (x, w) in aa {
+        let xt = if w == 1 {
+            x + T
+        } else {
+            x - T
+        };
+        shift += div_euclid(xt, L);
+        bb.push(rem_euclid(xt, L));
+    }
+    bb.sort();
+    shift = rem_euclid(shift, N as i64);
+    debug!(bb, shift);
+
+    for b in bb.iter().skip(shift as usize) {
+        println!("{}", b);
+    }
+    for b in bb.iter().take(shift as usize) {
+        println!("{}", b);
+    }
+}
+
