@@ -390,11 +390,109 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
 fn main() {
     input! {
         N: usize,
-        M: usize,
+        W: usize,
         aa: [(usize, usize); N],
     }
     let N: usize = N;
-    let M: usize = M;
+    let W: usize = W;
     let aa: Vec<(usize, usize)> = aa;
-    println!("{} {} {:?}", N, M, aa);
+
+    if N <= 30 {
+        solve1(N, W, aa);
+        return;
+    }
+
+    if aa.iter().all(|&(v, w), | w <= 1000) {
+        solve2(N, W, aa);
+        return;
+    }
+
+    solve3(N, W, aa);
+}
+
+fn solve1(N: usize, W: usize, aa: Vec<(usize, usize)>) {
+    let greedy = |arr: &Vec<(usize, usize)>| -> Vec<(usize, usize)> {
+        let n = arr.len();
+        let mut bb = vec![];
+
+        for flag in 0..1 << n {
+            let mut total_v = 0;
+            let mut total_w = 0;
+
+            for i in 0..n {
+                if flag & (1 << i) > 0 {
+                    total_v += arr[i].0;
+                    total_w += arr[i].1;
+                }
+            }
+
+            if total_w <= W {
+                bb.push((total_v, total_w));
+            }
+        }
+        bb
+    };
+
+    let bb = greedy(&aa[0..N / 2].to_vec());
+    let cc = greedy(&aa[N / 2..].to_vec());
+
+    let mut res = 0;
+    for &(bv, bw) in &bb {
+        for &(cv, cw) in &cc {
+            if bw + cw > W { continue; }
+            res = max(res, bv + cv);
+        }
+    }
+    println!("{:?}", res);
+}
+
+fn solve2(N: usize, W: usize, aa: Vec<(usize, usize)>) {
+    // dp is max value for w
+    let mut dp = vec![vec![0; W + 1]; N + 1];
+
+    dp[0][0] = 0;
+
+    for i in 0..N {
+        for w in 0..W + 1 {
+            if w < aa[i].1 {
+                dp[i + 1][w] = dp[i][w];
+            } else {
+                dp[i + 1][w] = max(dp[i][w], dp[i][w - aa[i].1] + aa[i].0);
+            }
+        }
+    }
+
+    println!("{:?}", dp[N][W]);
+}
+
+fn solve3(N: usize, W: usize, aa: Vec<(usize, usize)>) {
+    let max_v = aa.iter()
+        .map(|a| a.0)
+        .sum::<usize>();
+
+    // dp is min weight for v
+    let mut dp = vec![vec![0; max_v + 1]; N + 1];
+
+    // init dp
+    dp[0][0] = 0;
+    for v in 1..max_v + 1 {
+        dp[0][v] = 1_000_000_001;
+    }
+
+    for i in 0..N {
+        for v in 0..max_v + 1 {
+            if v < aa[i].0  {
+                dp[i + 1][v] = dp[i][v];
+            } else {
+                dp[i + 1][v] = min(dp[i][v], dp[i][v - aa[i].0] + aa[i].1);
+            }
+        }
+    }
+
+    let mut res = 0;
+    for v in 0..max_v + 1 {
+        if dp[N][v] > W { continue; }
+        res = max(res, v);
+    }
+    println!("{:?}", res);
 }
