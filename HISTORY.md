@@ -41,12 +41,12 @@
 * DP
   * 少ないほうが key , 多いほうが value
   
-## [C - String Coloring](https://atcoder.jp/contests/agc026/tasks/agc026_c)
+## [C - String Coloring](https://atcoder.jp/contests/agc026/tasks/agc026_c) [agc026_c](./src/bin/agc026_c.rs)
 
 * 半分全探索
 * Rust での Counter Map
 
-## [C - 無駄なものが嫌いな人](https://atcoder.jp/contests/arc017/tasks/arc017_3)
+## [C - 無駄なものが嫌いな人](https://atcoder.jp/contests/arc017/tasks/arc017_3) [arc017_3](./src/bin/arc017_3.rs)
 
 * 半分全探索
 * Rust での Counter Map
