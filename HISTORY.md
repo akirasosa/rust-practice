@@ -46,3 +46,8 @@
 * 半分全探索
 * Rust での Counter Map
 
+## [C - 無駄なものが嫌いな人](https://atcoder.jp/contests/arc017/tasks/arc017_3)
+
+* 半分全探索
+* Rust での Counter Map
+* [C - 無駄なものが嫌いな人](https://atcoder.jp/contests/arc017/tasks/arc017_3) とほぼ同じ

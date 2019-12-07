@@ -390,49 +390,56 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
 fn main() {
     input! {
         N: usize,
-        aa: chars,
+        M: isize,
+        aa: [isize; N],
     }
     let N: usize = N;
-    let aa: Vec<char> = aa;
-    let bb: Vec<char> = aa.iter().cloned().rev().collect();
+    let M: isize = M;
+    let aa: Vec<isize> = aa;
+    debug!(N, M, aa);
 
     let map_a = {
+        let aa = &aa[0..N / 2];
+        let n = aa.len();
         let mut map = HashMap::new();
 
-        for flag in 0..1 << N {
-            let mut r = String::new();
-            let mut b = String::new();
+        for flag in 0..1 << n {
+            let mut s = 0;
 
-            for i in 0..N {
+            for i in 0..n {
                 if flag & (1 << i) > 0 {
-                    r.push(aa[i])
-                } else {
-                    b.push(aa[i])
+                    s += aa[i];
                 }
             }
 
-            *map.entry((r, b)).or_insert(0) += 1;
+            *map.entry(s).or_insert(0) += 1;
         }
 
         map
     };
 
-    let mut res = 0usize;
+    let res = {
+        let mut res = 0;
+        let aa = &aa[(N / 2)..];
+        let n = aa.len();
 
-    for flag in 0..1 << N {
-        let mut r = String::new();
-        let mut b = String::new();
+        for flag in 0..1 << n {
+            let mut s = 0;
 
-        for i in 0..N {
-            if flag & (1 << i) > 0 {
-                r.push(bb[i])
-            } else {
-                b.push(bb[i])
+            for i in 0..n {
+                if flag & (1 << i) > 0 {
+                    s += aa[i];
+                }
+            }
+
+            let k = M - s;
+            if let Some(&cnt) = map_a.get(&k) {
+                res += cnt;
             }
         }
-        if let Some(&cnt) = map_a.get(&(b, r)) {
-            res += cnt;
-        }
-    }
+
+        res
+    };
+
     println!("{}", res);
 }

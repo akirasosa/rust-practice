@@ -391,11 +391,11 @@ fn main() {
     input! {
         N: usize,
         M: usize,
-        aa: [(usize, usize); N],
+        aa: [usize; N],
 //        aa: chars,
     }
     let N: usize = N;
     let M: usize = M;
-    let aa: Vec<(usize, usize)> = aa;
-    println!("{} {} {:?}", N, M, aa);
+    let aa: Vec<usize> = aa;
+    debug!(N, M, aa);
 }
