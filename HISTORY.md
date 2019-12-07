@@ -40,3 +40,9 @@
   * 2つを組み合わせる
 * DP
   * 少ないほうが key , 多いほうが value
+  
+## [C - String Coloring](https://atcoder.jp/contests/agc026/tasks/agc026_c)
+
+* 半分全探索
+* Rust での Counter Map
+

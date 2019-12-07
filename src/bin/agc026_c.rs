@@ -390,12 +390,49 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
 fn main() {
     input! {
         N: usize,
-        M: usize,
-        aa: [(usize, usize); N],
-//        aa: chars,
+        aa: chars,
     }
     let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<(usize, usize)> = aa;
-    println!("{} {} {:?}", N, M, aa);
+    let aa: Vec<char> = aa;
+    let bb: Vec<char> = aa.iter().cloned().rev().collect();
+
+    let map_a = {
+        let mut map = HashMap::new();
+
+        for flag in 0..1 << N {
+            let mut r = String::new();
+            let mut b = String::new();
+
+            for i in 0..N {
+                if flag & (1 << i) > 0 {
+                    r.push(aa[i])
+                } else {
+                    b.push(aa[i])
+                }
+            }
+            let cnt = map.entry((r, b)).or_insert(0);
+            *cnt += 1;
+        }
+
+        map
+    };
+
+    let mut res = 0usize;
+
+    for flag in 0..1 << N {
+        let mut r = String::new();
+        let mut b = String::new();
+
+        for i in 0..N {
+            if flag & (1 << i) > 0 {
+                r.push(bb[i])
+            } else {
+                b.push(bb[i])
+            }
+        }
+        if let Some(&cnt) = map_a.get(&(b, r)) {
+            res += cnt;
+        }
+    }
+    println!("{}", res);
 }

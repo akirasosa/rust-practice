@@ -402,7 +402,7 @@ fn main() {
         return;
     }
 
-    if aa.iter().all(|&(v, w), | w <= 1000) {
+    if aa.iter().all(|&(_v, w), | w <= 1000) {
         solve2(N, W, aa);
         return;
     }
