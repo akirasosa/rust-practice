@@ -51,3 +51,10 @@
 * 半分全探索
 * Rust での Counter Map
 * [C - String Coloring](https://atcoder.jp/contests/agc026/tasks/agc026_c) とほぼ同じ
+
+## [G - Mixture Drug](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_g) [code_thanks_festival_2017_g](./src/bin/code_thanks_festival_2017_g.rs)
+
+* 難しい！ 後でリベンジする
+* 一般グラフの最大安定集合問題
+
+
