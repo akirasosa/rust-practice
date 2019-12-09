@@ -57,4 +57,7 @@
 * 難しい！ 後でリベンジする
 * 一般グラフの最大安定集合問題
 
+## [C - All Green](https://atcoder.jp/contests/abc104/tasks/abc104_c) [abc104_c](./src/bin/abc104_c.rs)
 
+* bit 全探索
+* bit 全探索で問題設定を簡易化する
