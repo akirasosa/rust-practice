@@ -16,14 +16,14 @@ macro_rules! debug {
     };
 }
 
-pub fn div_euclid(a: i64, rhs: i64) -> i64{
+pub fn div_euclid(a: i64, rhs: i64) -> i64 {
     let q = a / rhs;
     if a % rhs < 0 {
-        return if rhs > 0 { q - 1 } else { q + 1 }
+        return if rhs > 0 { q - 1 } else { q + 1 };
     }
     q
 }
 
 fn main() {
-    debug!(div_euclid(21, 20));
+    println!("{:#010b}", (1 << 5) - 1)
 }

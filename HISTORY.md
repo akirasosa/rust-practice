@@ -61,3 +61,8 @@
 
 * bit 全探索
 * bit 全探索で問題設定を簡易化する
+
+## [D - 派閥](https://atcoder.jp/contests/abc002/tasks/abc002_4) [abc002_4](./src/bin/abc002_4.rs)
+
+* Max clique problem
+* N が小さいので bit 全探索で解ける
