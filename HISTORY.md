@@ -78,3 +78,9 @@
 * dfs
 * grid graph
 * [A - 深さ優先探索](https://atcoder.jp/contests/atc001/tasks/dfs_a) と同じ要領で解ける
+
+## [B - バウムテスト](https://atcoder.jp/contests/arc037/tasks/arc037_b) [arc037_b](./src/bin/arc037_b.rs)
+
+* dfs
+* number of connected components
+* cycle graph detection
