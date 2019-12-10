@@ -99,3 +99,10 @@
 * grid graph
 * 基本的に [C - 幅優先探索](https://atcoder.jp/contests/abc007/tasks/abc007_3) と同じ
 
+## [D - Grid Repainting](https://atcoder.jp/contests/abc088/tasks/abc088_d) [abc088_d](./src/bin/abc088_d.rs)
+
+* bfs
+* shortest path
+* grid graph
+* 基本的に [C - 幅優先探索](https://atcoder.jp/contests/abc007/tasks/abc007_3) と同じ
+

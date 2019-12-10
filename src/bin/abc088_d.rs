@@ -6,7 +6,7 @@
 
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Equal, Greater, Less};
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::f64::consts::PI;
 use std::io::Write;
 use std::ops::{AddAssign, Sub};
@@ -392,15 +392,57 @@ const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 fn main() {
     input! {
-        N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: chars,
-//        board: [chars; H],
+        H: usize,
+        W: usize,
+        board: [chars; H],
     }
-    let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
-}
+    let H: usize = H;
+    let W: usize = W;
+    let board: Vec<Vec<char>> = board;
+//    debug!(H, W, board);
 
+    let bfs = |pos_s: (i32, i32), pos_g: (i32, i32)| {
+        let mut dist: HashMap<(i32, i32), usize> = HashMap::new();
+        dist.insert(pos_s, 0);
+
+        let mut queue = VecDeque::new();
+        queue.push_back(pos_s);
+
+        while let Some(pos) = queue.pop_front() {
+            for &d in DIRECTIONS.iter() {
+                let pos_new = (pos.0 + d.0, pos.1 + d.1);
+                if pos_new.0 < 0 || pos_new.0 >= H as i32 { continue; }
+                if pos_new.1 < 0 || pos_new.1 >= W as i32 { continue; }
+                if board[pos_new.0 as usize][pos_new.1 as usize] == '#' { continue; }
+                if dist.contains_key(&pos_new) { continue; }
+
+                let d = dist[&pos] + 1;
+                dist.insert(pos_new, d);
+                queue.push_back(pos_new);
+
+                if pos_new == pos_g {
+                    return Some(d);
+                }
+            }
+        }
+
+        None
+    };
+
+    if let Some(path_len) = bfs((0, 0), (H as i32 - 1, W as i32 - 1)) {
+        let n_wall = {
+            let mut n_wall = 0;
+            for i in 0..H {
+                for j in 0..W {
+                    if board[i][j] == '#' { n_wall += 1 }
+                }
+            }
+            n_wall
+        };
+        let res = H * W - n_wall - (path_len + 1);
+
+        println!("{}", res);
+    } else {
+        println!("{}", -1);
+    }
+}
