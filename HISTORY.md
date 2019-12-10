@@ -92,3 +92,10 @@
 * grid graph
 * 典型問題
 
+## [E - チーズ (Cheese)](https://atcoder.jp/contests/joi2011yo/tasks/joi2011yo_e) [joi2011yo_e](./src/bin/joi2011yo_e.rs)
+
+* bfs
+* shortest path
+* grid graph
+* 基本的に [C - 幅優先探索](https://atcoder.jp/contests/abc007/tasks/abc007_3) と同じ
+

@@ -25,5 +25,7 @@ pub fn div_euclid(a: i64, rhs: i64) -> i64 {
 }
 
 fn main() {
-    println!("{:#010b}", (1 << 5) - 1)
+//    println!("{:#010b}", (1 << 5) - 1)
+   let a: u32 = '9'.to_digit(10).unwrap();
+   debug!(a)
 }
