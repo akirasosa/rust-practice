@@ -106,3 +106,11 @@
 * grid graph
 * 基本的に [C - 幅優先探索](https://atcoder.jp/contests/abc007/tasks/abc007_3) と同じ
 
+## [A - Darker and Darker](https://atcoder.jp/contests/agc033/tasks/agc033_a) [agc033_a](./src/bin/agc033_a.rs)
+
+* bfs
+* shortest path
+* grid graph
+* 多点スタート
+  * 最初に queue にスタートを積む
+
