@@ -1,4 +1,3 @@
-#![allow(unknown_lints)]
 #![allow(unused_imports)]
 #![allow(dead_code)]
 #![allow(unused_macros)]
@@ -388,16 +387,62 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
     q
 }
 
+const DIRECTIONS: [(i64, i64); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
+
+struct Solver {
+    board: Vec<Vec<char>>,
+    seen: HashSet<(i64, i64)>,
+}
+
+impl Solver {
+    fn dfs(&mut self, pos: (i64, i64)) {
+        self.seen.insert(pos);
+
+        for &d in DIRECTIONS.iter() {
+            let pos_new = (pos.0 + d.0, pos.1 + d.1);
+            if pos_new.0 < 0 || pos_new.0 >= self.board.len() as i64 { continue; }
+            if pos_new.1 < 0 || pos_new.1 >= self.board[0].len() as i64 { continue; }
+            if self.board[pos_new.0 as usize][pos_new.1 as usize] == '#' { continue; }
+            if self.seen.contains(&pos_new) { continue; }
+            self.dfs(pos_new);
+        }
+    }
+}
+
 fn main() {
     input! {
-        N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: chars,
-//        board: [chars; H],
+        H: usize,
+        W: usize,
+        board: [chars; H],
     }
-    let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let H: usize = H;
+    let W: usize = W;
+    let board: Vec<Vec<char>> = board;
+    debug!(H, W, board);
+
+    let mut pos_s = (0i64, 0i64);
+    let mut pos_g = (0i64, 0i64);
+    for i in 0..H {
+        for j in 0..W {
+            if board[i][j] == 's' {
+                pos_s = (i as i64, j as i64);
+            }
+            if board[i][j] == 'g' {
+                pos_g = (i as i64, j as i64);
+            }
+        }
+    }
+    debug!(pos_s, pos_g);
+
+    let mut solver = Solver {
+        board: board,
+        seen: HashSet::new(),
+    };
+    solver.dfs(pos_s);
+
+    if solver.seen.contains(&pos_g) {
+        println!("Yes");
+    } else {
+        println!("No");
+    }
 }
