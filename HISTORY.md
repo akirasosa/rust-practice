@@ -72,3 +72,9 @@
 * dfs
 * 典型問題
 * grid graph
+
+## [B - 埋め立て](https://atcoder.jp/contests/arc031/tasks/arc031_2) [arc031_2](./src/bin/arc031_2.rs)
+
+* dfs
+* grid graph
+* [A - 深さ優先探索](https://atcoder.jp/contests/atc001/tasks/dfs_a) と同じ要領で解ける
