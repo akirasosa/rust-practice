@@ -121,3 +121,8 @@
   * コストがかからない場合、queue の先頭に追加
   * コストがかからない場合、queue の末尾に追加
   * queue を処理しながらコストを記録していく
+  
+## [C - One-stroke Path](https://atcoder.jp/contests/abc054/tasks/abc054_c) [abc054_c](./src/bin/abc054_c.rs)
+
+* dfs
+* dfs を使ったパスの全探索 O(N!)

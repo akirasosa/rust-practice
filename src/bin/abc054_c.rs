@@ -390,18 +390,55 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
 
 const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
+struct Solver {
+    G: Vec<Vec<usize>>,
+    seen: HashSet<usize>,
+}
+
+impl Solver {
+    fn dfs(&mut self, v: usize, n_nodes: usize) -> usize {
+        let mut count = 0;
+        self.seen.insert(v);
+
+        if self.seen.len() == n_nodes {
+            return 1;
+        }
+
+        for v_next in self.G[v].to_vec() {
+            if self.seen.contains(&v_next) { continue; }
+            count += self.dfs(v_next, n_nodes);
+            self.seen.remove(&v_next);
+        }
+
+        count
+    }
+}
+
 fn main() {
     input! {
         N: usize,
         M: usize,
-        aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
+        aa: [(usize, usize); M],
     }
     let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let aa: Vec<(usize, usize)> = aa;
+
+    let G = {
+        let mut G = vec![vec![]; N];
+        for (u, v) in aa {
+            let (u, v) = (u - 1, v - 1);
+            G[u].push(v);
+            G[v].push(u);
+        }
+        G
+    };
+
+    let mut solver = Solver {
+        G: G,
+        seen: HashSet::new(),
+    };
+    let res = solver.dfs(0, N);
+
+    println!("{}", res);
 }
 
