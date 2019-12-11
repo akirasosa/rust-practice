@@ -407,16 +407,47 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 
 fn main() {
     input! {
-        N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
+        A: isize,
     }
-    let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let A: isize = A;
+
+    let mut remain = 1000 - A;
+    let mut res = 0;
+
+    loop {
+        if remain == 0 { break; }
+        if remain >= 500 {
+            remain -= 500;
+            res += 1;
+            continue;
+        }
+        if remain >= 100 {
+            remain -= 100;
+            res += 1;
+            continue;
+        }
+        if remain >= 50 {
+            remain -= 50;
+            res += 1;
+            continue;
+        }
+        if remain >= 10 {
+            remain -= 10;
+            res += 1;
+            continue;
+        }
+        if remain >= 5 {
+            remain -= 5;
+            res += 1;
+            continue;
+        }
+        if remain >= 1 {
+            remain -= 1;
+            res += 1;
+            continue;
+        }
+    }
+
+    println!("{}", res);
 }
 

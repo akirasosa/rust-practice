@@ -11,6 +11,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::f64::consts::PI;
 use std::io::Write;
 use std::ops::{AddAssign, Sub};
+use std::iter::FromIterator;
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -408,15 +409,31 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 fn main() {
     input! {
         N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
+        aa: [chars; N],
     }
-    let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let aa: Vec<Vec<char>> = aa;
+
+    let count = |line: &Vec<char>| {
+        let mut line = line.clone();
+        let mut cnt = 0;
+
+        loop {
+            if line.len() < 5 { break; }
+            let chunk: String = line[0..5].to_vec().into_iter().collect();
+            if chunk == "tokyo" || chunk == "kyoto" {
+                line = line[5..].to_vec();
+                cnt += 1;
+            } else {
+                line = line[1..].to_vec();
+            }
+        }
+
+        cnt
+    };
+
+    for a in aa {
+        let res = count(&a);
+        println!("{}", res);
+    }
 }
 
