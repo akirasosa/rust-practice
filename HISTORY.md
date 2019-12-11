@@ -114,3 +114,10 @@
 * 多点スタート
   * 最初に queue にスタートを積む
 
+## [C - 器物損壊！高橋君](https://atcoder.jp/contests/arc005/tasks/arc005_3) [arc005_3](./src/bin/arc005_3.rs)
+
+* bfs
+* 0-1 BFS
+  * コストがかからない場合、queue の先頭に追加
+  * コストがかからない場合、queue の末尾に追加
+  * queue を処理しながらコストを記録していく
