@@ -126,3 +126,8 @@
 
 * dfs
 * dfs を使ったパスの全探索 O(N!)
+
+## [D - カード並べ](https://atcoder.jp/contests/joi2010yo/tasks/joi2010yo_d) [joi2010yo_d](./src/bin/joi2010yo_d.rs)
+
+* permutations
+    * python だと itertools を使うだけなのだが、、

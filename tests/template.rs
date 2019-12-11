@@ -10,6 +10,6 @@ fn test_0() {
     assert_cli::Assert::cargo_binary(NAME)
         .stdin(stdin)
         .stdout()
-        .is("")
+        .is("0")
         .unwrap();
 }

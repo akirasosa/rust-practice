@@ -413,15 +413,24 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 fn main() {
     input! {
         N: usize,
-        M: usize,
+        K: usize,
         aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
     }
     let N: usize = N;
-    let M: usize = M;
+    let K: usize = K;
     let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+
+    let res = permutations(N, K)
+        .map(|x| {
+            x.iter()
+                .map(|&x| aa[x as usize])
+                .fold(String::new(), |acc, x| {
+                    format!("{}{}", acc, x.to_string())
+                })
+        })
+        .collect::<HashSet<_>>()
+        .len();
+
+    println!("{}", res);
 }
 
