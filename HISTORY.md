@@ -131,3 +131,9 @@
 
 * permutations
     * python だと itertools を使うだけなのだが、、
+    
+## [D - Islands War](https://atcoder.jp/contests/abc103/tasks/abc103_d) [abc103_d](./src/bin/abc103_d.rs)
+
+* 区間スケジューリング
+  * パット見では気づかない
+
