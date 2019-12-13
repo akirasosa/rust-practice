@@ -101,19 +101,6 @@ impl BIT {
 }
 
 fn main() {
-    let mut bit: BinaryIndexTree<usize> = BinaryIndexTree::new(10, Ops::Max);
-    bit.set(1, 4);
-    bit.set(7, 2);
-
-    let mut bit2 = BIT::new(10);
-    bit2.update(1, 4);
-    bit2.update(7, 2);
-
-    let mut bit3: BinaryIndexTree<usize> = BinaryIndexTree::new(10, Ops::Sum);
-    bit3.set(1, 4);
-    bit3.set(7, 2);
-
-    for i in 0..10 {
-        println!("{} {} {} {}", i, bit.query(i), bit2.max(i), bit3.query(i));
-    }
+    let aa = vec![1, 4, 5];
+    println!("{:?}", aa[0..1].to_vec())
 }
