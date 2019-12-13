@@ -54,7 +54,8 @@
 
 ## [G - Mixture Drug](https://atcoder.jp/contests/code-thanks-festival-2017/tasks/code_thanks_festival_2017_g) [code_thanks_festival_2017_g](./src/bin/code_thanks_festival_2017_g.rs)
 
-* 難しい！ 後でリベンジする
+* 難しい！
+* 後でリベンジする
 * 一般グラフの最大安定集合問題
 
 ## [C - All Green](https://atcoder.jp/contests/abc104/tasks/abc104_c) [abc104_c](./src/bin/abc104_c.rs)
@@ -137,3 +138,7 @@
 * 区間スケジューリング
   * パット見では気づかない
 
+## [D - プレゼント](https://atcoder.jp/contests/abc038/tasks/abc038_d) [abc038_d](./src/bin/abc038_d.rs)
+
+* 難しい！
+* BIT

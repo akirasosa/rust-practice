@@ -432,15 +432,27 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 fn main() {
     input! {
         N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
+        aa: [(usize, usize); N],
     }
-    let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let mut aa: Vec<(usize, usize)> = aa;
+
+    // w を小さい順に見ていって、自分より小さい h を持つ箱の中で、最も包める箱を見つけたい -> h を区間とした BIT(Max)
+    // 同じ w について h は降順にしておかないと都合が悪い. なぜなら 10 2 5 などになっていると 5 が 2 を包めると見てしまうから.
+    // もちろん実際は w が等しいので包めない.
+
+    aa.sort_by_key(|&(w, h)| (w, -(h as isize)));
+
+    let max_h = aa.iter()
+        .map(|&(_w, h)| h)
+        .max()
+        .unwrap();
+    let mut bit: BinaryIndexTree<usize> = BinaryIndexTree::new(max_h + 1, Ops::Max);
+
+    for (_w, h) in aa {
+        let n = bit.query(h - 1);
+        bit.set(h, n + 1);
+    }
+
+    println!("{}", bit.query(max_h));
 }
 
