@@ -12,6 +12,7 @@ use std::f64::consts::PI;
 use std::io::Write;
 use std::ops::{AddAssign, Sub, Deref};
 use std::borrow::Borrow;
+use std::iter::FromIterator;
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -427,6 +428,25 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
         }
     }
     inner(Vec::new(), k - 1, n as u8)
+}
+
+#[derive(PartialEq, Eq, Debug, Copy, Clone, Default, Hash)]
+struct Reverse<T>(T);
+
+impl<T: PartialOrd> PartialOrd for Reverse<T> {
+    fn partial_cmp(&self, other: &Reverse<T>) -> Option<Ordering> {
+        other.0.partial_cmp(&self.0)
+    }
+    fn lt(&self, other: &Self) -> bool { other.0 < self.0 }
+    fn le(&self, other: &Self) -> bool { other.0 <= self.0 }
+    fn gt(&self, other: &Self) -> bool { other.0 > self.0 }
+    fn ge(&self, other: &Self) -> bool { other.0 >= self.0 }
+}
+
+impl<T: Ord> Ord for Reverse<T> {
+    fn cmp(&self, other: &Reverse<T>) -> Ordering {
+        other.0.cmp(&self.0)
+    }
 }
 
 fn main() {

@@ -147,3 +147,11 @@
 
 * 難しい！
 * 文字列 s, t が与えられたときに、t を並び替えて s との不一致を最小にする. このときの最小の不一致数は？
+
+## [C - 積み重ね](https://atcoder.jp/contests/arc006/tasks/arc006_3) [arc006_3](./src/bin/arc006_3.rs)
+
+* greedy
+* 以下の点から、greedy に帰結できる
+    * できるだけ小さいダンボールを選んで積み重ねるべき
+    * 地面に置くのは最も不利な選択肢
+* おまけとして、descending の binary search 

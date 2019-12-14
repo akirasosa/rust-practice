@@ -452,15 +452,28 @@ impl<T: Ord> Ord for Reverse<T> {
 fn main() {
     input! {
         N: usize,
-        M: usize,
         aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
     }
-    let N: usize = N;
-    let M: usize = M;
     let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+
+    let mut bb: Vec<usize> = vec![];
+
+    for a in aa {
+        let idx = bb
+            .binary_search_by(|&b| {
+                Reverse(a).cmp(&Reverse(b))
+            })
+            .unwrap_or_else(|x| x);
+
+        if idx >= bb.len() {
+            bb.push(a);
+        } else {
+            bb[idx] = a;
+        }
+
+        bb.sort();
+    }
+
+    println!("{}", bb.len());
 }
 
