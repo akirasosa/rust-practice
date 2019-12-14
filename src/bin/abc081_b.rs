@@ -1,13 +1,18 @@
+#![allow(unknown_lints)]
 #![allow(unused_imports)]
 #![allow(dead_code)]
 #![allow(unused_macros)]
+#![allow(non_snake_case)]
+#![allow(bare_trait_objects)]
 
-use std::cmp;
 use std::cmp::{max, min};
-use std::cmp::Ordering::{self, Greater, Less};
-use std::collections::{HashMap, HashSet};
+use std::cmp::Ordering::{self, Equal, Greater, Less};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::f64::consts::PI;
-use std::ops::{AddAssign, Sub};
+use std::io::Write;
+use std::ops::{AddAssign, Sub, Deref};
+use std::borrow::Borrow;
+use std::iter::FromIterator;
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -58,7 +63,19 @@ macro_rules! read_value {
     };
 }
 
-pub trait Ext {
+macro_rules! debug {
+    ($($e:expr),*) => {
+        #[cfg(debug_assertions)]
+        $({
+            let (e, mut err) = (stringify!($e), std::io::stderr());
+            writeln!(err, "{} = {:?}", e, $e).unwrap()
+        })*
+    };
+}
+
+const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
+
+trait Ext {
     type Item;
 
     fn lower_bound(&self, x: &Self::Item) -> usize
@@ -218,23 +235,23 @@ impl<T> Ext for [T] {
     }
 }
 
-pub struct UnionFind {
+struct UnionFind {
     parts: Vec<usize>
 }
 
 impl UnionFind {
-    pub fn new(n: usize) -> UnionFind {
+    fn new(n: usize) -> UnionFind {
         let parts = (0..n).collect();
         UnionFind { parts: parts }
     }
 
-    pub fn union(&mut self, i: usize, j: usize) {
+    fn union(&mut self, i: usize, j: usize) {
         let i_leader = self.find(i);
         let j_leader = self.find(j);
         self.parts[j_leader] = self.parts[i_leader];
     }
 
-    pub fn find(&mut self, i: usize) -> usize {
+    fn find(&mut self, i: usize) -> usize {
         let mut p = i;
         while self.parts[p] != p {
             p = self.parts[p]
@@ -248,7 +265,7 @@ impl UnionFind {
         p
     }
 
-    pub fn find_only(&self, i: usize) -> usize {
+    fn find_only(&self, i: usize) -> usize {
         let mut p = i;
         while self.parts[p] != p {
             p = self.parts[p]
@@ -256,56 +273,78 @@ impl UnionFind {
         p
     }
 
-    pub fn same(&mut self, i: usize, j: usize) -> bool {
+    fn same(&mut self, i: usize, j: usize) -> bool {
         self.find(i) == self.find(j)
     }
 
-    pub fn same_only(&self, i: usize, j: usize) -> bool {
+    fn same_only(&self, i: usize, j: usize) -> bool {
         self.find_only(i) == self.find_only(j)
     }
 }
 
-pub struct BinaryIndexTree<T> {
+enum Ops {
+    Sum,
+    Max,
+}
+
+struct BinaryIndexTree<T> {
     data: Vec<T>,
+    ops: Ops,
 }
 
 impl<T> BinaryIndexTree<T>
     where
-        T: Copy + AddAssign + Sub<Output=T> + Default,
+        T: Copy + AddAssign + Sub<Output=T> + Default + Ord,
 {
-    pub fn new(size: usize) -> Self {
+    fn new(size: usize, ops: Ops) -> Self {
         let buf_size = size.next_power_of_two();
         BinaryIndexTree {
             data: vec![T::default(); buf_size + 1],
+            ops: ops,
         }
     }
 
-    pub fn range_sum(&self, l: usize, r: usize) -> T {
-        self.sum(r - 1) - self.sum(l - 1)
-    }
-
-    pub fn sum(&self, i: usize) -> T {
+    fn query(&self, i: usize) -> T {
         let mut i = i as i64;
         let mut ret = T::default();
-        while i > 0 {
-            ret += self.data[i as usize];
-            i -= i & -i;
+        match self.ops {
+            Ops::Sum => {
+                while i > 0 {
+                    ret += self.data[i as usize];
+                    i -= i & -i;
+                }
+            }
+            Ops::Max => {
+                while i > 0 {
+                    ret = max(ret, self.data[i as usize]);
+                    i -= i & -i;
+                }
+            }
         }
         ret
     }
 
-    pub fn add(&mut self, i: usize, value: T) {
+    fn set(&mut self, i: usize, value: T) {
         assert!(i > 0);
         let n = self.data.len() as i64;
         let mut i = i as i64;
-        while i <= n - 1 {
-            self.data[i as usize] += value;
-            i += i & -i;
+        match self.ops {
+            Ops::Sum => {
+                while i <= n - 1 {
+                    self.data[i as usize] += value;
+                    i += i & -i;
+                }
+            }
+            Ops::Max => {
+                while i <= n - 1 && self.data[i as usize] < value {
+                    self.data[i as usize] = value;
+                    i += i & -i;
+                }
+            }
         }
     }
 }
 
-#[inline]
 fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     debug_assert!(min <= max, "min must be less than or equal to max");
     if input < min {
@@ -317,7 +356,6 @@ fn clamp<T: PartialOrd>(input: T, min: T, max: T) -> T {
     }
 }
 
-#[inline]
 fn coord_compress<T: std::clone::Clone + std::cmp::Ord>(src: Vec<T>) -> Vec<usize> {
     let mut tmp = src.clone();
     tmp.sort();
@@ -329,7 +367,6 @@ fn coord_compress<T: std::clone::Clone + std::cmp::Ord>(src: Vec<T>) -> Vec<usiz
         .collect()
 }
 
-#[inline]
 fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool {
     let mut size = r - l;
     let mut base = l;
@@ -344,21 +381,86 @@ fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool
     base + !query_fn(base) as i64
 }
 
+fn rel<T: PartialOrd + Default>(n: T) -> T {
+    if n < T::default() {
+        T::default()
+    } else {
+        n
+    }
+}
+
+fn rem_euclid(a: i64, rhs: i64) -> i64 {
+    let r = a % rhs;
+    if r < 0 {
+        if rhs < 0 {
+            r - rhs
+        } else {
+            r + rhs
+        }
+    } else {
+        r
+    }
+}
+
+fn div_euclid(a: i64, rhs: i64) -> i64 {
+    let q = a / rhs;
+    if a % rhs < 0 {
+        return if rhs > 0 { q - 1 } else { q + 1 };
+    }
+    q
+}
+
+fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
+    fn inner(array: Vec<u8>, depth: usize, max: u8) -> Box<Iterator<Item=Vec<u8>>> {
+        let na = (0..max).flat_map(move |x| {
+            if array.contains(&x) {
+                None
+            } else {
+                let mut newarray = array.clone();
+                newarray.push(x);
+                Some(newarray)
+            }
+        });
+        if depth > 0 {
+            Box::new(na.flat_map(move |x| inner(x, depth - 1, max)))
+        } else {
+            Box::new(na)
+        }
+    }
+    inner(Vec::new(), k - 1, n as u8)
+}
+
+#[derive(PartialEq, Eq, Debug, Copy, Clone, Default, Hash)]
+struct Reverse<T>(T);
+
+impl<T: PartialOrd> PartialOrd for Reverse<T> {
+    fn partial_cmp(&self, other: &Reverse<T>) -> Option<Ordering> {
+        other.0.partial_cmp(&self.0)
+    }
+    fn lt(&self, other: &Self) -> bool { other.0 < self.0 }
+    fn le(&self, other: &Self) -> bool { other.0 <= self.0 }
+    fn gt(&self, other: &Self) -> bool { other.0 > self.0 }
+    fn ge(&self, other: &Self) -> bool { other.0 >= self.0 }
+}
+
+impl<T: Ord> Ord for Reverse<T> {
+    fn cmp(&self, other: &Reverse<T>) -> Ordering {
+        other.0.cmp(&self.0)
+    }
+}
+
 fn main() {
     input! {
-        n: usize,
-        arr: [usize; n],
+        N: usize,
+        aa: [usize; N],
     }
-    let mut arr: Vec<usize> = arr;
-    let mut cnt = 0;
+    let aa: Vec<usize> = aa;
 
-    loop {
-        if arr.iter().any(|v| v % 2 == 1) {
-            break;
-        }
-        arr = arr.iter().map(|v| v / 2).collect();
-        cnt += 1;
-    }
+    let res = aa.iter()
+        .map(|a| a.trailing_zeros())
+        .min()
+        .unwrap();
 
-    println!("{}", cnt)
+    println!("{}", res);
 }
+
