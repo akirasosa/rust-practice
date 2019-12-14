@@ -346,12 +346,12 @@ fn binary_search<F>(l: i64, r: i64, query_fn: F) -> i64 where F: Fn(i64) -> bool
 
 fn main() {
     input! {
-        s: chars,
+        aa: chars,
     }
-    let s: Vec<char> = s;
-    let res: u32 = s.iter()
-        .map(|n| n.to_digit(10).unwrap())
-        .sum();
+    let aa: Vec<char> = aa;
+    let res = aa.iter()
+        .filter(|&&a| a == '1')
+        .count();
 
     println!("{}", res)
 }
