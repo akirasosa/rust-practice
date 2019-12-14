@@ -430,6 +430,21 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 }
 
 fn main() {
-    5usize.pow(2);
+    input! {
+        X: usize,
+        Y: usize,
+    }
+    let X: usize = X;
+    let Y: usize = Y;
+
+    let mut x = X;
+    let mut res = 1;
+    loop {
+        x *= 2;
+        if x > Y { break;}
+        res += 1;
+    }
+
+    println!("{}", res);
 }
 
