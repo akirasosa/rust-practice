@@ -465,8 +465,11 @@ fn _main() {
 }
 
 fn count_inconsistent(aa: &Vec<char>, bb: &Vec<char>) -> usize {
+    let uniq_chars = aa.iter()
+        .chain(bb.iter())
+        .collect::<HashSet<_>>();
     let mut n = 0;
-    for c in (b'a'..b'z' + 1).map(char::from) {
+    for &c in uniq_chars {
         let n_a = aa.iter().filter(|&a| a == &c).count();
         let n_b = bb.iter().filter(|&b| b == &c).count();
         n += min(n_a, n_b);
