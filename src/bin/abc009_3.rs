@@ -7,7 +7,7 @@
 
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Equal, Greater, Less};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque, BTreeMap};
 use std::f64::consts::PI;
 use std::io::Write;
 use std::ops::{AddAssign, Sub, Deref};
@@ -429,18 +429,95 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
     inner(Vec::new(), k - 1, n as u8)
 }
 
+fn _main() {
+    input! {
+        N: usize,
+        K: usize,
+        aa: chars,
+    }
+    let N: usize = N;
+    let K: usize = K;
+    let aa: Vec<char> = aa;
+
+    let mut bb = aa.clone();
+
+    let results = (0..N)
+        .map(|i| {
+            let min_char = bb[i..].to_vec().into_iter().min().unwrap();
+            let min_char_idx = bb[i..].to_vec().iter().position(|&x| x == min_char).unwrap();
+
+            bb.swap(i, min_char_idx + i);
+
+            let n_diff = aa.iter()
+                .zip(bb.iter())
+                .filter(|&(a, b)| a != b)
+                .count();
+
+            (n_diff, bb.clone())
+        })
+        .filter(|&(n, ref _arr)| n <= K)
+        .map(|(_n, arr)| arr.iter().cloned().collect::<String>())
+        .collect::<Vec<_>>();
+
+    let res = results.last().unwrap();
+
+    println!("{}", res)
+}
+
+fn count_inconsistent(aa: &Vec<char>, bb: &Vec<char>) -> usize {
+    let mut n = 0;
+    for c in (b'a'..b'z' + 1).map(char::from) {
+        let n_a = aa.iter().filter(|&a| a == &c).count();
+        let n_b = bb.iter().filter(|&b| b == &c).count();
+        n += min(n_a, n_b);
+    }
+    aa.len() - n
+}
+
 fn main() {
     input! {
         N: usize,
-        M: usize,
-        aa: [usize; N],
-//        aa: [(usize, usize); M],
-//        aa: chars,
-//        board: [chars; H],
+        K: usize,
+        aa: chars,
     }
     let N: usize = N;
-    let M: usize = M;
-    let aa: Vec<usize> = aa;
-    debug!(N, M, aa);
+    let K: usize = K;
+    let aa: Vec<char> = aa;
+
+    let mut bb = {
+        let mut bb= aa.clone();
+        bb.sort();
+        bb
+    };
+
+    let mut res: Vec<char> = vec![];
+
+    for _i in 0..N {
+        let cc = bb.clone();
+        for (j, &c) in cc.iter().enumerate() {
+            let v0 = aa[0..res.len() + 1].to_vec();
+            let v1: Vec<char> = [res.clone(), vec![c]].concat();
+            let n0 = v0.iter()
+                .zip(v1.iter())
+                .filter(|&(a, b)| a != b)
+                .count();
+
+            let w0 = aa[v0.len()..].to_vec();
+            let w1 = {
+                let mut tmp = bb.clone();
+                tmp.remove(j);
+                tmp
+            };
+            let n1 = count_inconsistent(&w0, &w1);
+
+            if n0 + n1 <= K {
+                res.push(c);
+                bb.remove(j);
+                break;
+            }
+        }
+    }
+
+    println!("{}", res.iter().cloned().collect::<String>());
 }
 
