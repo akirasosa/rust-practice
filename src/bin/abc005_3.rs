@@ -450,11 +450,50 @@ impl<T: Ord> Ord for Reverse<T> {
 }
 
 fn main() {
-    let aa = vec![1, 3, 5, 7];
-    let res = aa.binary_search(&10);
-//    let res = aa.binary_search_by(|&a| {
-//        Reverse(8).cmp(&Reverse(a))
-//    });
-    debug!(res);
+    input! {
+        T: isize,
+        N: usize,
+        aa: [isize; N],
+        M: usize,
+        bb: [isize; M],
+    }
+    let T: isize = T;
+    let mut aa: Vec<isize> = aa;
+    let bb: Vec<isize> = bb;
+
+    for b in bb {
+        // 過去のたこ焼き
+        let idx = aa.binary_search(&b);
+        let idx = match idx {
+            Ok(idx) => idx,
+            Err(idx) => {
+                if idx == 0 {
+                    println!("no");
+                    return;
+                }
+                idx - 1
+            }
+        };
+
+        // 食べられるたこ焼きで最も古いもの
+        let idx = aa[0..idx + 1].binary_search_by(|&a| {
+            Reverse(b - T).cmp(&Reverse(a))
+        });
+        let idx = match idx {
+            Ok(idx) => idx,
+            Err(idx) => {
+                if idx == aa.len() {
+                    println!("no");
+                    return;
+                }
+                idx
+            }
+        };
+
+        // 無駄なたこ焼きをすべて廃棄
+        aa = aa[idx + 1..].to_vec();
+    }
+
+    println!("yes");
 }
 

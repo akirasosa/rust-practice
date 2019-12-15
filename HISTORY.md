@@ -155,3 +155,9 @@
     * できるだけ小さいダンボールを選んで積み重ねるべき
     * 地面に置くのは最も不利な選択肢
 * おまけとして、descending の binary search 
+
+## [C - おいしいたこ焼きの売り方](https://atcoder.jp/contests/abc005/tasks/abc005_3) [abc005_3](./src/bin/abc005_3.rs)
+
+* greedy
+* [C - 積み重ね](https://atcoder.jp/contests/arc006/tasks/arc006_3) とよく似た考え方
+  * binary search で最も厳しいところを探していく
