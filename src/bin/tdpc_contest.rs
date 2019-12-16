@@ -450,5 +450,26 @@ impl<T: Ord> Ord for Reverse<T> {
 }
 
 fn main() {
+    input! {
+        N: usize,
+        aa: [usize; N],
+    }
+    let N: usize = N;
+    let aa: Vec<usize> = aa;
+//    debug!(N, aa);
+
+    let mut bb = HashSet::new();
+    bb.insert(0);
+
+    for a in aa {
+        let s = bb.iter()
+            .map(|&b| b + a)
+            .collect();
+        bb = bb.union(&s)
+            .cloned()
+            .collect();
+    }
+
+    println!("{}", bb.len());
 }
 

@@ -32,7 +32,7 @@
   * 2個の和だけを先に総当りで求める. (N + 1) ^ 2 のオーダーになる.
 * 二分探索
 
-## [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d)
+## [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d) [abc032_d](./src/bin/abc032_d.rs)
 
 * ナップサック問題の総まとめ
 * 半分全探索
@@ -168,4 +168,8 @@
 * greedy ではお膳立ての証明が必要
 * 2次元の場合、x or y どちらかで先にソートする. 例えば x とした場合、その後順番に左から見ていく.
   * [D - プレゼント](https://atcoder.jp/contests/abc038/tasks/abc038_d) と考え方は似ている
+* 図に描く
 
+## [A - コンテスト](https://atcoder.jp/contests/tdpc/tasks/tdpc_contest) [tdpc_contest](./src/bin/tdpc_contest.rs)
+
+* Rust では 1 << 100 は overflow
