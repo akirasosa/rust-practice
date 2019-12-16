@@ -450,6 +450,35 @@ impl<T: Ord> Ord for Reverse<T> {
 }
 
 fn main() {
-    debug!(std::isize::MAX);
+    input! {
+        N: usize,
+        aa: [(isize, isize); N],
+        bb: [(isize, isize); N],
+    }
+    let mut aa: Vec<(isize, isize)> = aa;
+    let mut bb: Vec<(isize, isize)> = bb;
+//    debug!(N, aa, bb);
+
+    bb.sort_by_key(|b| b.0);
+
+    let mut res = 0;
+    for (bx, by) in bb {
+        let cc = aa.clone();
+        let mut cc = cc.iter()
+            .enumerate()
+            .filter(|&(_idx, &(cx, cy))| {
+                cx < bx && cy < by
+            })
+            .collect::<Vec<_>>();
+        if cc.is_empty() { continue; }
+
+        cc.sort_by_key(|&(_idx, &(_x, y))| -y);
+        let idx = cc[0].0;
+
+        aa.remove(idx);
+        res += 1;
+    }
+
+    println!("{}", res);
 }
 

@@ -161,3 +161,11 @@
 * greedy
 * [C - 積み重ね](https://atcoder.jp/contests/arc006/tasks/arc006_3) とよく似た考え方
   * binary search で最も厳しいところを探していく
+  
+## [C - 2D Plane 2N Points](https://atcoder.jp/contests/abc091/tasks/arc092_a) [arc092_a](./src/bin/arc092_a.rs)
+
+* greedy
+* greedy ではお膳立ての証明が必要
+* 2次元の場合、x or y どちらかで先にソートする. 例えば x とした場合、その後順番に左から見ていく.
+  * [D - プレゼント](https://atcoder.jp/contests/abc038/tasks/abc038_d) と考え方は似ている
+
