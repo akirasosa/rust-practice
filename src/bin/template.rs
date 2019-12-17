@@ -73,6 +73,8 @@ macro_rules! debug {
     };
 }
 
+macro_rules! vec_md { ( $ init : expr ; $ ( $ dim : expr ) ;* ) => { vec_md ! ( $ ( $ dim ) ;* => $ init ) } ; ( $ head : expr ; $ ( $ tail : expr ) ;* => $ init : expr ) => { vec ! [ vec_md ! ( $ ( $ tail ) ;* => $ init ) ; $ head ] } ; ( $ head : expr => $ init : expr ) => { vec ! [ $ init ; $ head ] } ; }
+
 const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 trait Ext {

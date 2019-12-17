@@ -173,3 +173,11 @@
 ## [A - コンテスト](https://atcoder.jp/contests/tdpc/tasks/tdpc_contest) [tdpc_contest](./src/bin/tdpc_contest.rs)
 
 * Rust では 1 << 100 は overflow
+
+## [D - サイコロ](https://atcoder.jp/contests/tdpc/tasks/tdpc_dice) [tdpc_dice](./src/bin/tdpc_dice.rs)
+
+* 難しい！
+* 掛け算系は素因数分解
+* DP
+  * 添字 j が n2 以上 -> 添字に min を使う
+* pow は overflow

@@ -73,6 +73,8 @@ macro_rules! debug {
     };
 }
 
+macro_rules! vec_md { ( $ init : expr ; $ ( $ dim : expr ) ;* ) => { vec_md ! ( $ ( $ dim ) ;* => $ init ) } ; ( $ head : expr ; $ ( $ tail : expr ) ;* => $ init : expr ) => { vec ! [ vec_md ! ( $ ( $ tail ) ;* => $ init ) ; $ head ] } ; ( $ head : expr => $ init : expr ) => { vec ! [ $ init ; $ head ] } ; }
+
 const DIRECTIONS: [(i32, i32); 4] = [(0, 1), (1, 0), (0, -1), (-1, 0)];
 
 trait Ext {
@@ -450,15 +452,52 @@ impl<T: Ord> Ord for Reverse<T> {
 }
 
 fn main() {
-    let D = 8 * 9;
+    input! {
+        N: usize,
+        D: usize,
+    }
+    let N: usize = N;
+    let D: usize = D;
+//    debug!(N, D);
 
-//    let test = (1..)
-//        .take_while(|&i| D % 3i32.pow(i)  == 0)
-//        .count();
-    let test = (1..)
-        .take_while(|&i| D % 3i32.pow(i)  == 0)
-        .count();
+    let (n2, n3, n5) = {
+        let (mut n2, mut n3, mut n5) = (0, 0, 0);
+        let mut d = D;
 
-    debug!(test);
+        for &n in [2, 3, 5].iter() {
+            while d % n == 0 {
+                n2 += 1;
+                d /= n;
+            }
+        }
+
+        if d != 1 {
+            println!("0");
+            return;
+        }
+
+        (n2, n3, n5)
+    };
+
+    let mut dp = vec_md![0.; N + 1; n2 + 1; n3 + 1; n5 + 1];
+    dp[0][0][0][0] = 1.;
+
+    for i in 0..N {
+        for j in 0..n2 + 1 {
+            for k in 0..n3 + 1 {
+                for l in 0..n5 + 1 {
+                    let p = dp[i][j][k][l] / 6.;
+                    dp[i + 1][j][k][l] += p;  // 1
+                    dp[i + 1][min(j + 1, n2)][k][l] += p;  // 2
+                    dp[i + 1][j][min(k + 1, n3)][l] += p;  // 3
+                    dp[i + 1][min(j + 2, n2)][k][l] += p;  // 4
+                    dp[i + 1][j][k][min(l + 1, n5)] += p;  // 5
+                    dp[i + 1][min(j + 1, n2)][min(k + 1, n3)][l] += p;  // 6
+                }
+            }
+        }
+    }
+
+    println!("{:?}", dp[N][n2][n3][n5]);
 }
 
