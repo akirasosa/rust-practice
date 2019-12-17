@@ -186,3 +186,8 @@
 
 * DP
 * 要領は [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d) [abc032_d](./src/bin/abc032_d.rs) と同じ. 制約が増えただけ.
+
+## [D - 暑い日々 (Hot days)](https://atcoder.jp/contests/joi2013yo/tasks/joi2013yo_d) [joi2013yo_d](./src/bin/joi2013yo_d.rs)
+
+* DP
+* 状態に制約があるパターン (この日は、この服が着られない)
