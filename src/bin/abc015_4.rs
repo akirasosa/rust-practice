@@ -453,57 +453,34 @@ impl<T: Ord> Ord for Reverse<T> {
 
 fn main() {
     input! {
+        W: usize,
         N: usize,
-        D: usize,
+        K: usize,
+        aa: [(usize, usize); N],
     }
+    let W: usize = W;
     let N: usize = N;
-    let D: usize = D;
-//    debug!(N, D);
+    let K: usize = K;
+    let aa: Vec<(usize, usize)> = aa;
+//    debug!(W, N, K, aa);
 
-    let (n2, n3, n5) = {
-        let (mut n2, mut n3, mut n5) = (0, 0, 0);
-        let mut d = D;
-
-        while d % 2 == 0 {
-            n2 += 1;
-            d /= 2;
-        }
-        while d % 3 == 0 {
-            n3 += 1;
-            d /= 3;
-        }
-        while d % 5 == 0 {
-            n5 += 1;
-            d /= 5;
-        }
-
-        if d != 1 {
-            println!("0");
-            return;
-        }
-
-        (n2, n3, n5)
-    };
-
-    let mut dp = vec_md![0.; N + 1; n2 + 1; n3 + 1; n5 + 1];
-    dp[0][0][0][0] = 1.;
+    let mut dp = vec_md![0; N + 1; W + 1; K + 1];
+    dp[0][0][0] = 0;
 
     for i in 0..N {
-        for j in 0..n2 + 1 {
-            for k in 0..n3 + 1 {
-                for l in 0..n5 + 1 {
-                    let p = dp[i][j][k][l] / 6.;
-                    dp[i + 1][j][k][l] += p;  // 1
-                    dp[i + 1][min(j + 1, n2)][k][l] += p;  // 2
-                    dp[i + 1][j][min(k + 1, n3)][l] += p;  // 3
-                    dp[i + 1][min(j + 2, n2)][k][l] += p;  // 4
-                    dp[i + 1][j][k][min(l + 1, n5)] += p;  // 5
-                    dp[i + 1][min(j + 1, n2)][min(k + 1, n3)][l] += p;  // 6
+        for j in 0..W + 1 {
+            for k in 0..K + 1 {
+                let (a_w, a_v) = aa[i];
+
+                if j < a_w || k < 1 {
+                    dp[i + 1][j][k] = dp[i][j][k];
+                } else {
+                    dp[i + 1][j][k] = max(dp[i][j][k], dp[i][j - a_w][k - 1] + a_v);
                 }
             }
         }
     }
 
-    println!("{:?}", dp[N][n2][n3][n5]);
+    println!("{}", dp[N][W][K]);
 }
 

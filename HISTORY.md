@@ -181,3 +181,8 @@
 * DP
   * 添字 j が n2 以上 -> 添字に min を使う
 * pow は overflow
+
+## [D - 高橋くんの苦悩](https://atcoder.jp/contests/abc015/tasks/abc015_4) [abc015_4](./src/bin/abc015_4.rs)
+
+* DP
+* 要領は [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d) [abc032_d](./src/bin/abc032_d.rs) と同じ. 制約が増えただけ.
