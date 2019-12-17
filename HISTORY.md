@@ -191,3 +191,9 @@
 
 * DP
 * 状態に制約があるパターン (この日は、この服が着られない)
+
+## [E - 数](https://atcoder.jp/contests/tdpc/tasks/tdpc_number) [tdpc_number](./src/bin/tdpc_number.rs)
+
+* 桁 DP
+  * まだ慣れない
+  * smaller フラグ
