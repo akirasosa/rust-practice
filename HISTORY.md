@@ -201,3 +201,10 @@
 ## [C - Optimal Recommendations](https://atcoder.jp/contests/indeednow-finala-open/tasks/indeednow_2015_finala_c) [indeednow_2015_finala_c](./src/bin/indeednow_2015_finala_c.rs)
 
 * 多次元で遷移させる DP (LCS)
+
+## [B - 高橋君ゲーム](https://atcoder.jp/contests/arc057/tasks/arc057_b) [arc057_b](./src/bin/arc057_b.rs)
+
+* 難しい!
+* [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d) [abc032_d](./src/bin/abc032_d.rs) の ケース 3 に類似.
+  * ただし、それよりは相当難しい
+* 累積の場合は 1..N にして```dp[i][j] = dp[i-1][j] xxx```みたいにしたほうがやりやすい
