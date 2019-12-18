@@ -197,3 +197,7 @@
 * 桁 DP
   * まだ慣れない
   * smaller フラグ
+  
+## [C - Optimal Recommendations](https://atcoder.jp/contests/indeednow-finala-open/tasks/indeednow_2015_finala_c) [indeednow_2015_finala_c](./src/bin/indeednow_2015_finala_c.rs)
+
+* 多次元で遷移させる DP (LCS)
