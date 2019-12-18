@@ -208,3 +208,7 @@
 * [D - ナップサック問題](https://atcoder.jp/contests/abc032/tasks/abc032_d) [abc032_d](./src/bin/abc032_d.rs) の ケース 3 に類似.
   * ただし、それよりは相当難しい
 * 累積の場合は 1..N にして```dp[i][j] = dp[i-1][j] xxx```みたいにしたほうがやりやすい
+
+## [D - Complexity](https://atcoder.jp/contests/agc033/tasks/agc033_d)
+
+* 多分、難しすぎる（手を付けていない）
