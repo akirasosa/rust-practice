@@ -464,7 +464,7 @@ fn main() {
     let M: usize = M;
     let L: usize = L;
     let X: usize = X;
-    let mut aa: Vec<usize> = aa;
+    let aa: Vec<usize> = aa;
 
     let mut dp = vec_md![X + 1; N + 1; M + 1];
     dp[0][0] = 0;
