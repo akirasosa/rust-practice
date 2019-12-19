@@ -212,3 +212,8 @@
 ## [D - Complexity](https://atcoder.jp/contests/agc033/tasks/agc033_d)
 
 * 多分、難しすぎる（手を付けていない）
+
+## [D - Many Go Round](https://atcoder.jp/contests/maximum-cup-2018/tasks/maximum_cup_2018_d)
+
+* DP
+* 環状
