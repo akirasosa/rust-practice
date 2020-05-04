@@ -223,7 +223,7 @@ impl<T> Ext for [T] {
             f(unsafe { s.get_unchecked(base.0) }),
             f(unsafe { s.get_unchecked(base.1) }),
         );
-        (base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize)
+        base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize
     }
 
     fn equal_range_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> std::ops::Range<usize>
@@ -454,7 +454,6 @@ fn main() {
         N: usize,
         aa: [usize; N],
     }
-    let N: usize = N;
     let aa: Vec<usize> = aa;
 //    debug!(N, aa);
 

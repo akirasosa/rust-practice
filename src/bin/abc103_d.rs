@@ -221,7 +221,7 @@ impl<T> Ext for [T] {
             f(unsafe { s.get_unchecked(base.0) }),
             f(unsafe { s.get_unchecked(base.1) }),
         );
-        (base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize)
+        base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize
     }
 
     fn equal_range_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> std::ops::Range<usize>
@@ -407,12 +407,10 @@ fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
 
 fn main() {
     input! {
-        N: usize,
+        _N: usize,
         M: usize,
         aa: [(usize, usize); M],
     }
-    let N: usize = N;
-    let M: usize = M;
     let mut aa: Vec<(usize, usize)> = aa;
 
     aa.sort_by(|&a, &b| a.1.cmp(&b.1));

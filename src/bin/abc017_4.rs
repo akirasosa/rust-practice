@@ -205,7 +205,7 @@ impl<T> Ext for [T] {
             f(unsafe { s.get_unchecked(base.0) }),
             f(unsafe { s.get_unchecked(base.1) }),
         );
-        (base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize)
+        base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize
     }
 
     fn equal_range_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> std::ops::Range<usize>
@@ -355,11 +355,10 @@ fn rel<T: PartialOrd + Default>(n: T) -> T {
 fn main() {
     input! {
         n: usize,
-        m: usize,
+        _m: usize,
         aa: [usize; n],
     }
     let n: usize = n;
-    let m: usize = m;
     let aa: Vec<usize> = aa;
 
     let mut r = 0;

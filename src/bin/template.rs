@@ -5,14 +5,14 @@
 #![allow(non_snake_case)]
 #![allow(bare_trait_objects)]
 
+use std::borrow::Borrow;
 use std::cmp::{max, min};
 use std::cmp::Ordering::{self, Equal, Greater, Less};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::f64::consts::PI;
 use std::io::Write;
-use std::ops::{AddAssign, Sub, Deref};
-use std::borrow::Borrow;
 use std::iter::FromIterator;
+use std::ops::{AddAssign, Deref, Sub};
 
 macro_rules! input {
     (source = $s:expr, $($r:tt)*) => {
@@ -225,7 +225,7 @@ impl<T> Ext for [T] {
             f(unsafe { s.get_unchecked(base.0) }),
             f(unsafe { s.get_unchecked(base.1) }),
         );
-        (base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize)
+        base.0 + (cmp.0 == Less) as usize..base.1 + (cmp.1 != Greater) as usize
     }
 
     fn equal_range_by_key<'a, K, F>(&'a self, k: &K, mut f: F) -> std::ops::Range<usize>
@@ -412,8 +412,8 @@ fn div_euclid(a: i64, rhs: i64) -> i64 {
     q
 }
 
-fn permutations(n: usize, k: usize) -> Box<Iterator<Item=Vec<u8>>> {
-    fn inner(array: Vec<u8>, depth: usize, max: u8) -> Box<Iterator<Item=Vec<u8>>> {
+fn permutations(n: usize, k: usize) -> Box<dyn Iterator<Item=Vec<u8>>> {
+    fn inner(array: Vec<u8>, depth: usize, max: u8) -> Box<dyn Iterator<Item=Vec<u8>>> {
         let na = (0..max).flat_map(move |x| {
             if array.contains(&x) {
                 None
